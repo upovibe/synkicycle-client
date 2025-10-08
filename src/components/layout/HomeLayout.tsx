@@ -2,29 +2,18 @@ import { ContainerScroll } from "../ui/container-scroll-animation";
 
 export default function HomeLayout() {
   return (
-    <div className="min-h-screen flex items-center justify-center">
+    <div className="min-h-screen flex flex-col items-center justify-center">
+      <div className="text-center mb-8 z-10 relative">
+        <h1 className="text-5xl md:text-7xl font-bold text-gray-900 mb-4">
+          AI Networking
+          <span className="text-primary block">Companion</span>
+        </h1>
+        <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+          Connect, collaborate, and grow your professional network with the power of AI.
+        </p>
+      </div>
       <div className="flex flex-col overflow-hidden">
-        <ContainerScroll
-          titleComponent={
-            <>
-              <h1 className="text-4xl font-semibold text-black dark:text-white">
-                Unleash the power of <br />
-                <span className="text-4xl md:text-[6rem] font-bold mt-1 leading-none">
-                  Scroll Animations
-                </span>
-              </h1>
-            </>
-          }
-        >
-          <img
-            src={`/linear.webp`}
-            alt="hero"
-            height={720}
-            width={1400}
-            className="mx-auto rounded-2xl object-cover h-full object-left-top"
-            draggable={true}
-          />
-        </ContainerScroll>
+        <ContainerScroll />
       </div>
     </div>
   );
