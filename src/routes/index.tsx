@@ -1,6 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router'
-import HomeLayout from '../components/layout/HomeLayout'
+import { RootIndexProvider } from '../providers/RootIndexProvider'
 
 export const Route = createFileRoute('/')({
-  component: HomeLayout,
+  component: RootIndexProvider,
 })

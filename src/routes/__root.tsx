@@ -2,7 +2,7 @@ import { Outlet, createRootRoute, useLocation } from '@tanstack/react-router'
 import { Toaster } from 'react-hot-toast'
 
 import Header from '../components/layout/Header'
-import Footer from '../components/layout/Footer'
+// import Footer from '../components/layout/Footer'
 import { AuthProvider } from '../providers/AuthProvider'
 
 export const Route = createRootRoute({

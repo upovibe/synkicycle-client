@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Navigate } from '@tanstack/react-router'
 import { useAuthContext } from '@/providers/AuthProvider'
+import { LoaderOne } from '@/components/ui/loader'
 
 interface AuthGuardProps {
   children: React.ReactNode
@@ -27,7 +28,7 @@ export const AuthGuard = ({
   if (loading && isInitialLoad) {
     return (
       <div className="flex items-center justify-center min-h-screen">
-        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary"></div>
+        <LoaderOne />
       </div>
     )
   }
