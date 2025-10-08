@@ -5,10 +5,11 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
   Dialog,
-  DialogContent,
   DialogDescription,
+  DialogFooter,
   DialogHeader,
   DialogTitle,
+  StickyDialogContent,
 } from "@/components/ui/dialog";
 import { useAuthContext } from "@/providers/AuthProvider";
 import { useAuthStore } from "@/api/stores/authStore";
@@ -21,7 +22,7 @@ interface ProfileCompletionDialogProps {
 
 export function ProfileCompletionDialog({ open, onOpenChange }: ProfileCompletionDialogProps) {
   const { user } = useAuthContext();
-  const { updateProfile, loading } = useAuthStore();
+  const { updateProfile } = useAuthStore();
   const [formData, setFormData] = useState({
     name: user?.name || '',
     username: user?.username || '',
@@ -31,6 +32,7 @@ export function ProfileCompletionDialog({ open, onOpenChange }: ProfileCompletio
     interests: user?.interests || [],
   });
   const [interestInput, setInterestInput] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -46,12 +48,17 @@ export function ProfileCompletionDialog({ open, onOpenChange }: ProfileCompletio
       return;
     }
 
-    const result = await updateProfile(formData);
-    if (result.success) {
-      toast.success('Profile completed successfully!');
-      onOpenChange(false);
-    } else {
-      toast.error(result.error || 'Failed to update profile');
+    setIsSubmitting(true);
+    try {
+      const result = await updateProfile(formData);
+      if (result.success) {
+        toast.success('Profile completed successfully!');
+        onOpenChange(false);
+      } else {
+        toast.error(result.error || 'Failed to update profile');
+      }
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -88,18 +95,23 @@ export function ProfileCompletionDialog({ open, onOpenChange }: ProfileCompletio
   };
 
   return (
-    <div className="fixed inset-0 z-50">
-      <div className="fixed inset-0 bg-black/20 backdrop-blur-sm" />
-      <Dialog open={open} onOpenChange={() => {}}>
-        <DialogContent className="sm:max-w-[425px] backdrop-blur-md bg-white/95 border-white/20 shadow-2xl" showCloseButton={false}>
-        <DialogHeader>
+    <Dialog open={open} onOpenChange={() => {}}>
+      <StickyDialogContent
+        showCloseButton={false}
+        onPointerDownOutside={(e) => e.preventDefault()}
+        className="sm:max-w-[425px] backdrop-blur-md bg-white/95 border-white/20 shadow-2xl"
+      >
+        {/* Header */}
+        <DialogHeader className="bg-white border-b px-6 py-4 rounded-t-lg flex-shrink-0">
           <DialogTitle>Complete Your Profile</DialogTitle>
           <DialogDescription>
             Please complete your profile information to get the most out of your networking experience.
           </DialogDescription>
         </DialogHeader>
-        
-        <form onSubmit={handleSubmit} className="space-y-4">
+
+        {/* Scrollable Content */}
+        <div className="flex-1 overflow-y-auto px-6 py-4">
+          <form id="profile-form" onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
             <Label htmlFor="name">Full Name *</Label>
             <Input
@@ -196,15 +208,28 @@ export function ProfileCompletionDialog({ open, onOpenChange }: ProfileCompletio
               )}
             </div>
           </div>
-          
-          <div className="flex justify-end space-x-2 pt-4">
-            <Button type="submit" disabled={loading}>
-              {loading ? 'Saving...' : 'Complete Profile'}
-            </Button>
-          </div>
-        </form>
-        </DialogContent>
-      </Dialog>
-    </div>
+          </form>
+        </div>
+
+        {/* Footer */}
+        <DialogFooter className="bg-white border-t px-6 py-4 rounded-b-lg flex-shrink-0">
+          <Button 
+            type="submit" 
+            form="profile-form" 
+            disabled={isSubmitting}
+            className="w-full sm:w-auto"
+          >
+            {isSubmitting ? (
+              <>
+                Saving...
+                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin ml-2" />
+              </>
+            ) : (
+              'Complete Profile'
+            )}
+          </Button>
+        </DialogFooter>
+      </StickyDialogContent>
+    </Dialog>
   );
 }

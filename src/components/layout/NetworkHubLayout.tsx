@@ -12,7 +12,7 @@ import { cn } from "@/lib/utils";
 import { useAuthContext } from "@/providers/AuthProvider";
 import { useNavigate } from "@tanstack/react-router";
 import toast from "react-hot-toast";
-import { ProfileCompletionDialog } from "@/components/ui/profile-completion-dialog";
+import { ProfileCompletionDialog } from "@/components/layout/ProfileCompletionDialog";
 
 interface NetworkHubLayoutProps {
   children: React.ReactNode
