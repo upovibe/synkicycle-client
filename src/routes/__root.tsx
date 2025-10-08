@@ -18,8 +18,8 @@ function RootComponent() {
     <AuthProvider>
       {/* Global Toast Notifications */}
       <Toaster position="top-center" />
-      {/* Universal Header - shows on all pages except auth */}
-      {!isAuthPage && <Header />}
+      {/* Universal Header - shows on all pages except auth and network */}
+      {!isAuthPage && !isNetworkPage && <Header />}
       <Outlet />
     </AuthProvider>
   )
