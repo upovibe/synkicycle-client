@@ -6,6 +6,8 @@ import {
   Network,
   Users,
   Settings,
+  User,
+  LogOut,
 } from "lucide-react";
 import { motion } from "motion/react";
 import { cn } from "@/lib/utils";
@@ -54,6 +56,9 @@ export default function NetworkHubLayout({ children }: NetworkHubLayoutProps) {
         <Users className="h-5 w-5 shrink-0 text-neutral-700 dark:text-neutral-200" />
       ),
     },
+  ];
+
+  const bottomLinks = [
     {
       label: "Settings",
       href: "#",
@@ -65,7 +70,7 @@ export default function NetworkHubLayout({ children }: NetworkHubLayoutProps) {
       label: "Logout",
       href: "#",
       icon: (
-        <ArrowLeft className="h-5 w-5 shrink-0 text-neutral-700 dark:text-neutral-200" />
+        <LogOut className="h-5 w-5 shrink-0 text-neutral-700 dark:text-neutral-200" />
       ),
       onClick: handleLogout,
     },
@@ -87,18 +92,23 @@ export default function NetworkHubLayout({ children }: NetworkHubLayoutProps) {
               ))}
             </div>
           </div>
-          <div>
-            <SidebarLink
-              link={{
-                label: user?.name || user?.username || 'User',
-                href: "#",
-                icon: (
-                  <div className="h-7 w-7 shrink-0 rounded-full bg-primary flex items-center justify-center text-white text-sm font-medium">
-                    {(user?.name || user?.username || 'U').charAt(0).toUpperCase()}
-                  </div>
-                ),
-              }}
-            />
+          <div className="flex flex-col gap-2">
+            {bottomLinks.map((link, idx) => (
+              <SidebarLink key={idx} link={link} />
+            ))}
+            <div className="mt-4">
+              <SidebarLink
+                link={{
+                  label: user?.name || user?.username || 'User',
+                  href: "#",
+                  icon: (
+                    <div className="h-7 w-7 shrink-0 rounded-full bg-primary flex items-center justify-center text-white text-sm font-medium">
+                      {(user?.name || user?.username || 'U').charAt(0).toUpperCase()}
+                    </div>
+                  ),
+                }}
+              />
+            </div>
           </div>
         </SidebarBody>
       </Sidebar>
