@@ -1,4 +1,5 @@
 import { Outlet, createRootRoute, useLocation } from '@tanstack/react-router'
+import { Toaster } from 'react-hot-toast'
 
 import Header from '../components/layout/Header'
 import Footer from '../components/layout/Footer'
@@ -15,17 +16,11 @@ function RootComponent() {
 
   return (
     <AuthProvider>
-      {isAuthPage ? (
-        <Outlet />
-      ) : (
-        <div className="min-h-screen flex flex-col">
-          <Header />
-          <main className="flex-1">
-            <Outlet />
-          </main>
-          <Footer />
-        </div>
-      )}
+      {/* Global Toast Notifications */}
+      <Toaster position="top-center" />
+      {/* Universal Header - shows on all pages except auth */}
+      {!isAuthPage && <Header />}
+      <Outlet />
     </AuthProvider>
   )
 }
