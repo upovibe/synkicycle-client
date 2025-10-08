@@ -180,7 +180,7 @@ export const useAuthStore = create<AuthStore>()(
         set({ loading: true, error: null });
         
         try {
-          const response: UpdateProfileResponse = await apiClient.patch(
+          const response: UpdateProfileResponse = await apiClient.put(
             AUTH_ENDPOINTS.PROFILE,
             data
           );
