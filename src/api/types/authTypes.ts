@@ -5,13 +5,16 @@ export interface User {
   _id: string;
   uuid: string;
   email: string;
+  password?: string; // Only included when explicitly selected
   username?: string;
   name?: string;
+  phone?: string;
   bio?: string;
   profession?: string;
   interests?: string[];
   avatar?: string;
   socketId?: string;
+  aiEmbedding?: number[];
   verified: boolean;
   lastActive?: string;
   createdAt: string;
@@ -63,10 +66,12 @@ export interface ProfileResponse {
 export interface UpdateProfileRequest {
   username?: string;
   name?: string;
+  phone?: string;
   bio?: string;
   profession?: string;
   interests?: string[];
   avatar?: string;
+  aiEmbedding?: number[];
 }
 
 // Update profile response

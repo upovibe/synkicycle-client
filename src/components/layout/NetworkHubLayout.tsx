@@ -1,12 +1,10 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Sidebar, SidebarBody, SidebarLink } from "../ui/sidebar";
 import {
-  ArrowLeft,
   Network,
   Users,
   Settings,
-  User,
   LogOut,
 } from "lucide-react";
 import { motion } from "motion/react";
@@ -14,6 +12,7 @@ import { cn } from "@/lib/utils";
 import { useAuthContext } from "@/providers/AuthProvider";
 import { useNavigate } from "@tanstack/react-router";
 import toast from "react-hot-toast";
+import { ProfileCompletionDialog } from "@/components/ui/profile-completion-dialog";
 
 interface NetworkHubLayoutProps {
   children: React.ReactNode
@@ -23,6 +22,17 @@ export default function NetworkHubLayout({ children }: NetworkHubLayoutProps) {
   const { user, logout } = useAuthContext();
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
+  const [showProfileDialog, setShowProfileDialog] = useState(false);
+
+  // Check if profile is incomplete
+  const isProfileIncomplete = user && (!user.name || !user.username);
+
+  // Show profile dialog when user is logged in but profile is incomplete
+  useEffect(() => {
+    if (isProfileIncomplete) {
+      setShowProfileDialog(true);
+    }
+  }, [isProfileIncomplete]);
 
   const handleLogout = async () => {
     console.log('Logout clicked');
@@ -117,6 +127,12 @@ export default function NetworkHubLayout({ children }: NetworkHubLayoutProps) {
           {children}
         </div>
       </div>
+      
+      {/* Profile Completion Dialog */}
+      <ProfileCompletionDialog 
+        open={showProfileDialog} 
+        onOpenChange={setShowProfileDialog} 
+      />
     </div>
   );
 }
