@@ -7,6 +7,7 @@ interface AuthContextType {
   loading: boolean
   user: any
   checkAuth: () => Promise<{ success: boolean; error?: string }>
+  logout: () => Promise<{ success: boolean; error?: string }>
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
@@ -22,6 +23,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     loading, 
     user, 
     getProfile,
+    logout,
     accessToken 
   } = useAuthStore()
   
@@ -42,7 +44,8 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     isAuthenticated,
     loading,
     user,
-    checkAuth: getProfile
+    checkAuth: getProfile,
+    logout
   }
 
   return (
