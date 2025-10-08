@@ -4,6 +4,7 @@ import { useAuthStore } from '@/api/stores/authStore'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { cn } from '@/lib/utils'
+import toast from 'react-hot-toast'
 
 export const Route = createFileRoute('/auth/login')({
   component: LoginPage,
@@ -21,7 +22,10 @@ function LoginPage() {
     e.preventDefault()
     const result = await login(formData)
     if (result.success) {
+      toast.success('Login successful! Welcome back!')
       navigate({ to: '/network' })
+    } else {
+      toast.error(result.error || 'Login failed. Please try again.')
     }
   }
 
