@@ -99,7 +99,7 @@ export function ProfileCompletionDialog({ open, onOpenChange }: ProfileCompletio
       <StickyDialogContent
         showCloseButton={false}
         onPointerDownOutside={(e) => e.preventDefault()}
-        className="sm:max-w-[425px] backdrop-blur-md bg-white/95 border-white/20 shadow-2xl"
+        className="sm:max-w-[425px] md:max-w-lg backdrop-blur-md bg-white/95 border-white/20 shadow-2xl"
       >
         {/* Header */}
         <DialogHeader className="bg-white border-b px-6 py-4 rounded-t-lg flex-shrink-0">
