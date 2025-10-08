@@ -23,11 +23,18 @@ export default function NetworkHubLayout({ children }: NetworkHubLayoutProps) {
   const [open, setOpen] = useState(false);
 
   const handleLogout = async () => {
-    const result = await logout();
-    if (result.success) {
-      toast.success('Logged out successfully');
-      navigate({ to: '/auth/login' });
-    } else {
+    console.log('Logout clicked');
+    try {
+      const result = await logout();
+      console.log('Logout result:', result);
+      if (result.success) {
+        toast.success('Logged out successfully');
+        navigate({ to: '/auth/login' });
+      } else {
+        toast.error('Failed to logout');
+      }
+    } catch (error) {
+      console.error('Logout error:', error);
       toast.error('Failed to logout');
     }
   };
