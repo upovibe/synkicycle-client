@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useNavigate } from '@tanstack/react-router';
 import type { Connection } from '@/api/types/chatTypes';
 import { useChatStore } from '@/api/stores/chatStore';
 import { useAuthContext } from '@/providers/AuthProvider';
@@ -23,6 +24,7 @@ interface ConnectionDetailsProps {
 export function ConnectionDetails({ connection }: ConnectionDetailsProps) {
   const { user } = useAuthContext();
   const { respondToConnection } = useChatStore();
+  const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
 
   if (!connection) {
@@ -81,10 +83,9 @@ export function ConnectionDetails({ connection }: ConnectionDetailsProps) {
     }
   };
 
-  const handleGoToNetworkHub = () => {
-    // Navigate to Network Hub for messaging
-    toast.success('Redirecting to Network Hub...');
-    // We'll implement navigation later
+  const handleGoToMessages = () => {
+    // Navigate to Messages page
+    navigate({ to: '/network/messages' });
   };
 
   return (
@@ -154,12 +155,12 @@ export function ConnectionDetails({ connection }: ConnectionDetailsProps) {
               )}
 
               <Button 
-                onClick={handleGoToNetworkHub}
+                onClick={handleGoToMessages}
                 className="w-full mt-6"
                 size="lg"
               >
                 <MessageSquare className="h-4 w-4 mr-2" />
-                Go to Network Hub
+                Go to Messages
               </Button>
             </div>
           </div>

@@ -332,11 +332,22 @@ export const useChatStore = create<ChatState>((set, get) => ({
     socketService.onConnectionUpdated((data) => {
       const { connection } = data;
       
-      set((state) => ({
-        connections: state.connections.map((conn) =>
-          conn && conn._id && conn._id === connection._id ? connection : conn
-        ),
-      }));
+      set((state) => {
+        // Check if connection exists in state
+        const existingIndex = state.connections.findIndex(
+          (conn) => conn && conn._id && conn._id === connection._id
+        );
+        
+        if (existingIndex !== -1) {
+          // Update existing connection
+          const updatedConnections = [...state.connections];
+          updatedConnections[existingIndex] = connection;
+          return { connections: updatedConnections };
+        } else {
+          // Add new connection if it doesn't exist (for real-time updates on Messages page)
+          return { connections: [connection, ...state.connections] };
+        }
+      });
       
       // Don't show toast here - respondToConnection already shows it
     });

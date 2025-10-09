@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useAuthContext } from '@/providers/AuthProvider';
 import type { Connection } from '@/api/types/chatTypes';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
@@ -17,12 +18,16 @@ export function ChatList({
   selectedConnection,
   onSelectConnection,
 }: ChatListProps) {
+  const { user } = useAuthContext();
   const [searchQuery, setSearchQuery] = useState('');
+  
+  const userId = user?._id || (user as any)?.id;
 
   // Filter connections by search query
   const filteredConnections = connections.filter((connection) => {
+    // Find the other participant (not the current user)
     const otherParticipant = connection.participants.find(
-      (p) => p._id !== connection.initiator._id
+      (p) => p._id !== userId
     );
     const searchLower = searchQuery.toLowerCase();
     return (
@@ -89,8 +94,9 @@ export function ChatList({
         ) : (
           <div className="divide-y divide-border">
             {filteredConnections.map((connection) => {
+              // Find the other participant (not the current user)
               const otherParticipant = connection.participants.find(
-                (p) => p._id !== connection.initiator._id
+                (p) => p._id !== userId
               );
 
               if (!otherParticipant) return null;

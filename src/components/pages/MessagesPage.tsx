@@ -8,7 +8,6 @@ import { Button } from '@/components/ui/button';
 import { ArrowLeft } from 'lucide-react';
 
 export default function MessagesPage() {
-  const { user } = useAuthContext();
   const { connections, fetchConnections, connectionsLoading } = useChatStore();
   const [selectedConnection, setSelectedConnection] = useState<Connection | null>(null);
 
