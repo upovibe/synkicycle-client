@@ -18,7 +18,7 @@ export default function ConnectionsPage() {
 
   // Filter connections based on active tab
   const filteredConnections = connections.filter((connection) => {
-    if (!user) return false;
+    if (!user || !connection || !connection.initiator) return false;
     
     // Try different possible user ID fields
     const userId = user._id || (user as any).id;

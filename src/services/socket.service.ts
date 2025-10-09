@@ -74,7 +74,15 @@ class SocketService {
 
   // Connection events
   onNewConnection(callback: (data: SocketConnectionEvent) => void) {
-    this.on('new-connection', callback);
+    this.on('connection:new', callback);
+  }
+
+  onConnectionUpdated(callback: (data: SocketConnectionEvent) => void) {
+    this.on('connection:updated', callback);
+  }
+
+  onConnectionDeleted(callback: (data: { connectionId: string; message: string }) => void) {
+    this.on('connection:deleted', callback);
   }
 
   onConnectionAccepted(callback: (data: SocketConnectionEvent) => void) {

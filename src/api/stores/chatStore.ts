@@ -72,7 +72,15 @@ export const useChatStore = create<ChatState>((set, get) => ({
     set({ connectionsLoading: true, connectionsError: null });
     try {
       const response: GetConnectionsResponse = await apiClient.get(CONNECTION_ENDPOINTS.GET_CONNECTIONS, { params });
-      set({ connections: response.data.connections, connectionsLoading: false });
+      
+      // Sort connections by lastMessageAt (most recent first)
+      const sortedConnections = response.data.connections.sort((a, b) => {
+        const dateA = a.lastMessageAt ? new Date(a.lastMessageAt).getTime() : new Date(a.updatedAt).getTime();
+        const dateB = b.lastMessageAt ? new Date(b.lastMessageAt).getTime() : new Date(b.updatedAt).getTime();
+        return dateB - dateA;
+      });
+      
+      set({ connections: sortedConnections, connectionsLoading: false });
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Failed to fetch connections';
       set({ connectionsError: errorMessage, connectionsLoading: false });
@@ -275,23 +283,32 @@ export const useChatStore = create<ChatState>((set, get) => ({
       toast.success('New connection request received');
     });
 
-    // Connection accepted event
-    socketService.onConnectionAccepted((data) => {
+    // Connection updated event (handles accept)
+    socketService.onConnectionUpdated((data) => {
+      const { connection } = data;
+      
       set((state) => ({
         connections: state.connections.map((conn) =>
-          conn._id === data.connection._id ? data.connection : conn
+          conn._id === connection._id ? connection : conn
         ),
       }));
-      toast.success('Connection accepted');
+      
+      // Show toast notification
+      if (connection.status === 'accepted') {
+        toast.success('Connection accepted');
+      }
     });
 
-    // Connection declined event
-    socketService.onConnectionDeclined((data) => {
+    // Connection deleted event (handles decline/cancel)
+    socketService.onConnectionDeleted((data) => {
+      const { connectionId } = data;
+      
       set((state) => ({
-        connections: state.connections.map((conn) =>
-          conn._id === data.connection._id ? data.connection : conn
-        ),
+        connections: state.connections.filter((conn) => conn && conn._id && conn._id !== connectionId),
+        activeConnection: state.activeConnection?._id === connectionId ? null : state.activeConnection,
       }));
+      
+      toast('Connection request cancelled');
     });
 
     // Typing events
