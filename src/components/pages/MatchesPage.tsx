@@ -2,7 +2,7 @@
 
 import { MatchCard } from '@/components/ui/MatchCard';
 import { Button } from '@/components/ui/button';
-import { useMatches } from '@/hooks/useMatches';
+import { useMatchStore } from '@/api/stores/matchStore';
 import { 
   RefreshCw, 
   Users, 
@@ -12,11 +12,11 @@ import {
   UserCheck,
   Heart
 } from 'lucide-react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { LoaderOne } from '@/components/ui/loader';
 
 export function MatchesPage() {
-  const { matches, loading, error, fetchMatches } = useMatches();
+  const { matches, loading, error, fetchMatches } = useMatchStore();
   const [activeFilter, setActiveFilter] = useState<'all' | 'professional' | 'social' | 'both'>('all');
 
   const filteredMatches = matches.filter(match => {
@@ -40,6 +40,11 @@ export function MatchesPage() {
   };
 
   const stats = getFilterStats();
+
+  // Load matches on mount
+  useEffect(() => {
+    fetchMatches();
+  }, [fetchMatches]);
 
   if (loading && matches.length === 0) {
     return (

@@ -16,7 +16,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Loader2, MessageCircle, Sparkles } from 'lucide-react';
 import type { MatchUser } from '@/api/types/matchTypes';
-import { useMatches } from '@/hooks/useMatches';
+import { useMatchStore } from '@/api/stores/matchStore';
 import toast from 'react-hot-toast';
 
 interface ConnectionDialogProps {
@@ -32,7 +32,7 @@ export function ConnectionDialog({
   targetUser, 
   connectionType 
 }: ConnectionDialogProps) {
-  const { generateConnectionMessage } = useMatches();
+  const { generateConnectionMessage } = useMatchStore();
   const [aiGeneratedMessage, setAiGeneratedMessage] = useState('');
   const [customMessage, setCustomMessage] = useState('');
   const [isGeneratingMessage, setIsGeneratingMessage] = useState(false);
