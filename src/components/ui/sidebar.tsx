@@ -185,7 +185,7 @@ export const SidebarLink = ({
         href={link.href}
         onClick={handleClick}
         className={cn(
-          "flex items-center justify-start gap-2 group/sidebar py-2 px-2 rounded-md cursor-pointer transition-colors",
+          "flex items-center gap-2 group/sidebar py-2 px-2 rounded-md cursor-pointer transition-colors",
           "hover:bg-neutral-100 dark:hover:bg-neutral-800",
           className
         )}
@@ -212,14 +212,16 @@ export const SidebarLink = ({
       to={link.href}
       onClick={handleClick}
       className={cn(
-        "flex items-center justify-start gap-2 group/sidebar py-2 px-2 rounded-md cursor-pointer transition-colors",
+        "flex items-center gap-2 group/sidebar py-2 px-2 rounded-md cursor-pointer transition-colors",
         "hover:bg-neutral-100 dark:hover:bg-neutral-800",
-        isActive && "bg-primary/10 text-primary dark:bg-primary/20 dark:text-primary",
+        isActive ? "text-primary dark:text-primary" : "text-neutral-700 dark:text-neutral-200",
         className
       )}
       {...props}
     >
-      {link.icon}
+      <span className={cn(isActive && "text-primary dark:text-primary")}>
+        {link.icon}
+      </span>
 
       <motion.span
         animate={{
@@ -228,7 +230,7 @@ export const SidebarLink = ({
         }}
         className={cn(
           "text-sm group-hover/sidebar:translate-x-1 transition duration-150 whitespace-pre inline-block !p-0 !m-0",
-          isActive ? "text-primary dark:text-primary font-medium" : "text-neutral-700 dark:text-neutral-200"
+          isActive && "font-medium"
         )}
       >
         {link.label}
