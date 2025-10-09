@@ -5,6 +5,7 @@ import { useAuthContext } from '@/providers/AuthProvider';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { 
   CheckCircle, 
@@ -26,13 +27,15 @@ export function ConnectionDetails({ connection }: ConnectionDetailsProps) {
 
   if (!connection) {
     return (
-      <div className="flex flex-col items-center justify-center h-full text-muted-foreground">
-        <User className="h-16 w-16 mb-4" />
-        <h3 className="text-lg font-medium mb-2">Select a Connection</h3>
-        <p className="text-sm text-center max-w-sm">
-          Choose a connection from the list to view details and manage your request.
-        </p>
-      </div>
+      <Card className="flex flex-col h-full border-0 rounded-none md:border md:rounded-lg shadow-none md:shadow-sm">
+        <CardContent className="flex flex-col items-center justify-center h-full text-muted-foreground p-8">
+          <User className="h-20 w-20 mb-4 text-muted-foreground/30" />
+          <h3 className="text-xl font-semibold mb-2">Select a Connection</h3>
+          <p className="text-sm text-center max-w-sm text-muted-foreground">
+            Choose a connection from the list to view details and manage your request.
+          </p>
+        </CardContent>
+      </Card>
     );
   }
 
@@ -85,9 +88,8 @@ export function ConnectionDetails({ connection }: ConnectionDetailsProps) {
   };
 
   return (
-    <div className="flex flex-col h-full">
-      {/* Header */}
-      <div className="p-6 border-b border-border">
+    <Card className="flex flex-col h-full border-0 rounded-none md:border md:rounded-lg shadow-none md:shadow-sm">
+      <CardHeader className="border-b">
         <div className="flex items-center space-x-4">
           <Avatar className="h-16 w-16">
             <AvatarImage src={otherParticipant.avatar} />
@@ -113,10 +115,9 @@ export function ConnectionDetails({ connection }: ConnectionDetailsProps) {
             </div>
           </div>
         </div>
-      </div>
+      </CardHeader>
 
-      {/* Content */}
-      <div className="flex-1 p-6">
+      <CardContent className="flex-1 p-6 overflow-y-auto">
         {isAccepted ? (
           // Accepted State - Show success with check icon
           <div className="flex flex-col items-center justify-center h-full text-center">
@@ -242,7 +243,7 @@ export function ConnectionDetails({ connection }: ConnectionDetailsProps) {
             )}
           </div>
         )}
-      </div>
-    </div>
+      </CardContent>
+    </Card>
   );
 }

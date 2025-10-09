@@ -51,9 +51,9 @@ export default function ConnectionsPage() {
   }
 
   return (
-    <div className="flex h-full bg-background">
+    <div className="flex gap-4 h-full">
       {/* Left Section - Connections List */}
-      <div className="w-1/3 border-r border-border">
+      <div className="w-1/3 min-w-[320px]">
         <ConnectionsList
           connections={filteredConnections}
           activeTab={activeTab}

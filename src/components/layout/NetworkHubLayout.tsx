@@ -144,8 +144,8 @@ export default function NetworkHubLayout({ children }: NetworkHubLayoutProps) {
           </div>
         </SidebarBody>
       </Sidebar>
-      <div className="flex flex-1 overflow-hidden">
-        <div className="flex h-full w-full flex-1 flex-col bg-white p-2 md:p-10 dark:bg-neutral-900 overflow-y-auto">
+      <div className="flex flex-1 overflow-hidden bg-background">
+        <div className="flex h-full w-full flex-1 flex-col p-5 bg-background dark:bg-neutral-900 overflow-y-auto">
           {children}
         </div>
       </div>

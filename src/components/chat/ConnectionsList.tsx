@@ -3,6 +3,7 @@ import type { Connection } from '@/api/types/chatTypes';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Clock, CheckCircle, XCircle, User } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -76,10 +77,9 @@ export function ConnectionsList({
   };
 
   return (
-    <div className="flex flex-col h-full">
-      {/* Header */}
-      <div className="p-4 border-b border-border">
-        <h2 className="text-lg font-semibold">My Connections</h2>
+    <Card className="flex flex-col h-full border-0 rounded-none md:border md:rounded-lg shadow-none md:shadow-sm">
+      <CardHeader className="border-b">
+        <CardTitle className="text-xl">My Connections</CardTitle>
         
         {/* Search */}
         <div className="mt-3">
@@ -111,19 +111,23 @@ export function ConnectionsList({
             Received Requests
           </Button>
         </div>
-      </div>
+      </CardHeader>
 
-      {/* Connections List */}
-      <div className="flex-1 overflow-y-auto">
+      <CardContent className="flex-1 overflow-y-auto p-0">
         {filteredConnections.length === 0 ? (
-          <div className="flex flex-col items-center justify-center h-full text-muted-foreground">
-            <User className="h-8 w-8 mb-2" />
-            <p className="text-sm">
+          <div className="flex flex-col items-center justify-center h-full text-muted-foreground p-6">
+            <User className="h-12 w-12 mb-3 text-muted-foreground/50" />
+            <p className="text-sm font-medium">
               {activeTab === 'sent' ? 'No sent requests' : 'No received requests'}
+            </p>
+            <p className="text-xs text-muted-foreground mt-1">
+              {activeTab === 'sent' 
+                ? 'Start connecting with people from AI Matches' 
+                : 'You haven\'t received any connection requests yet'}
             </p>
           </div>
         ) : (
-          <div className="space-y-1 p-2">
+          <div className="divide-y divide-border">
             {filteredConnections.map((connection) => {
               const otherParticipant = connection.participants.find(
                 (p) => p._id !== connection.initiator._id
@@ -139,44 +143,45 @@ export function ConnectionsList({
                   key={connection._id}
                   onClick={() => onSelectConnection(connection)}
                   className={cn(
-                    'flex items-center p-3 rounded-lg cursor-pointer transition-colors',
+                    'flex items-center p-4 cursor-pointer transition-all duration-200',
                     'hover:bg-muted/50',
-                    isSelected && 'bg-primary/10 border border-primary/20',
-                    isUnread && 'bg-primary/5'
+                    isSelected && 'bg-primary/10 border-l-4 border-l-primary',
+                    isUnread && 'bg-blue-50/50 dark:bg-blue-950/20'
                   )}
                 >
                   {/* Avatar */}
-                  <Avatar className="h-10 w-10 mr-3">
+                  <Avatar className="h-12 w-12 mr-3 ring-2 ring-border">
                     <AvatarImage src={otherParticipant.avatar} />
-                    <AvatarFallback>
+                    <AvatarFallback className="text-sm font-semibold">
                       {otherParticipant.name?.[0] || otherParticipant.username?.[0] || 'U'}
                     </AvatarFallback>
                   </Avatar>
 
                   {/* Content */}
                   <div className="flex-1 min-w-0">
-                    <div className="flex items-center justify-between">
-                      <h3 className="font-medium text-sm truncate">
+                    <div className="flex items-center gap-2 mb-1">
+                      <h3 className="font-semibold text-sm truncate">
                         {otherParticipant.name || otherParticipant.username || 'Unknown User'}
                       </h3>
-                      <div className="flex items-center space-x-1">
-                        {getStatusIcon(connection.status)}
-                        <span className="text-xs text-muted-foreground">
-                          {new Date(connection.createdAt).toLocaleDateString()}
-                        </span>
-                      </div>
-                    </div>
-
-                    <div className="flex items-center justify-between mt-1">
-                      <p className="text-xs text-muted-foreground truncate">
-                        {connection.initialMessage || 'No message'}
-                      </p>
                       <Badge
                         variant={getStatusBadgeVariant(connection.status)}
-                        className="text-xs"
+                        className="text-xs px-2 py-0.5 shrink-0"
                       >
-                        {getStatusText(connection.status)}
+                        <div className="flex items-center gap-1">
+                          {getStatusIcon(connection.status)}
+                          <span>{getStatusText(connection.status)}</span>
+                        </div>
                       </Badge>
+                    </div>
+
+                    <p className="text-xs text-muted-foreground truncate mb-2">
+                      {connection.initialMessage || 'No message'}
+                    </p>
+
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs text-muted-foreground">
+                        {new Date(connection.createdAt).toLocaleDateString()}
+                      </span>
                     </div>
                   </div>
                 </div>
@@ -184,7 +189,7 @@ export function ConnectionsList({
             })}
           </div>
         )}
-      </div>
-    </div>
+      </CardContent>
+    </Card>
   );
 }
