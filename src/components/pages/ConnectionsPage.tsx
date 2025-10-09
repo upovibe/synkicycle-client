@@ -81,15 +81,13 @@ export default function ConnectionsPage() {
           // Show details on mobile when connection selected
           <div className="flex flex-col h-full">
             {/* Back button for mobile */}
-            <div className="p-4 border-b bg-background">
+            <div className="border-b bg-background">
               <Button
                 variant="ghost"
-                size="sm"
+                size="icon"
                 onClick={handleBackToList}
-                className="gap-2"
               >
-                <ArrowLeft className="h-4 w-4" />
-                Back to Connections
+                <ArrowLeft className="h-5 w-5" />
               </Button>
             </div>
             <div className="flex-1 overflow-hidden">
