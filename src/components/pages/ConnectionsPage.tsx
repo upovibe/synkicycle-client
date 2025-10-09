@@ -16,6 +16,16 @@ export default function ConnectionsPage() {
     fetchConnections();
   }, [fetchConnections]);
 
+  // Clear selection if selected connection is no longer in the list (deleted via socket)
+  useEffect(() => {
+    if (selectedConnection) {
+      const stillExists = connections.find(conn => conn._id === selectedConnection._id);
+      if (!stillExists) {
+        setSelectedConnection(null);
+      }
+    }
+  }, [connections, selectedConnection]);
+
   // Filter connections based on active tab
   const filteredConnections = connections.filter((connection) => {
     if (!user || !connection || !connection.initiator) return false;
@@ -55,13 +65,7 @@ export default function ConnectionsPage() {
 
       {/* Right Section - Connection Details */}
       <div className="flex-1">
-        <ConnectionDetails
-          connection={selectedConnection}
-          onConnectionUpdate={() => {
-            fetchConnections(); // Refresh the list
-            setSelectedConnection(null); // Clear selection
-          }}
-        />
+        <ConnectionDetails connection={selectedConnection} />
       </div>
     </div>
   );

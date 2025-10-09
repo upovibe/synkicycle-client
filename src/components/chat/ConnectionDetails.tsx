@@ -17,10 +17,9 @@ import toast from 'react-hot-toast';
 
 interface ConnectionDetailsProps {
   connection: Connection | null;
-  onConnectionUpdate: () => void;
 }
 
-export function ConnectionDetails({ connection, onConnectionUpdate }: ConnectionDetailsProps) {
+export function ConnectionDetails({ connection }: ConnectionDetailsProps) {
   const { user } = useAuthContext();
   const { respondToConnection } = useChatStore();
   const [isLoading, setIsLoading] = useState(false);
@@ -59,7 +58,7 @@ export function ConnectionDetails({ connection, onConnectionUpdate }: Connection
     setIsLoading(true);
     try {
       await respondToConnection(connection._id, 'accepted');
-      onConnectionUpdate();
+      // Don't call onConnectionUpdate - real-time socket will handle it
     } catch (error) {
       toast.error('Failed to accept connection');
     } finally {
@@ -71,7 +70,7 @@ export function ConnectionDetails({ connection, onConnectionUpdate }: Connection
     setIsLoading(true);
     try {
       await respondToConnection(connection._id, 'declined');
-      onConnectionUpdate();
+      // Don't call onConnectionUpdate - real-time socket will handle it
     } catch (error) {
       toast.error('Failed to decline connection');
     } finally {

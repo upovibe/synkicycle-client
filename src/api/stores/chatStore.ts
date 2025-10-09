@@ -124,7 +124,13 @@ export const useChatStore = create<ChatState>((set, get) => ({
           conn._id === connectionId ? response.data.connection : conn
         ),
       }));
-      toast.success(`Connection ${status} successfully`);
+      
+      // Show appropriate success message
+      if (status === 'accepted') {
+        toast.success('Connection accepted successfully');
+      } else if (status === 'declined') {
+        toast.success('Connection declined successfully');
+      }
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Failed to respond to connection';
       toast.error(errorMessage);
@@ -293,10 +299,7 @@ export const useChatStore = create<ChatState>((set, get) => ({
         ),
       }));
       
-      // Show toast notification
-      if (connection.status === 'accepted') {
-        toast.success('Connection accepted');
-      }
+      // Don't show toast here - respondToConnection already shows it
     });
 
     // Connection deleted event (handles decline/cancel)
@@ -308,7 +311,7 @@ export const useChatStore = create<ChatState>((set, get) => ({
         activeConnection: state.activeConnection?._id === connectionId ? null : state.activeConnection,
       }));
       
-      toast('Connection request cancelled');
+      // Don't show toast here - respondToConnection already shows it
     });
 
     // Typing events
