@@ -33,7 +33,7 @@ export const useMatches = () => {
     } catch (err: any) {
       const errorMessage = err.response?.data?.message || err.message || 'Failed to fetch matches';
       setError(errorMessage);
-      toast.error(errorMessage);
+      toast.error(`Error: ${errorMessage}`);
     } finally {
       setLoading(false);
     }
@@ -68,7 +68,7 @@ export const useMatches = () => {
       if (response.success) {
         return response.data.user;
       } else {
-        throw new Error(response.message || 'Failed to fetch user profile');
+        throw new Error('Failed to fetch user profile');
       }
     } catch (err: any) {
       const errorMessage = err.response?.data?.message || err.message || 'Failed to fetch user profile';
@@ -77,9 +77,10 @@ export const useMatches = () => {
     }
   };
 
-  // Load matches on mount
+  // Load matches on mount (only once)
   useEffect(() => {
     fetchMatches();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return {

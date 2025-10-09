@@ -11,7 +11,7 @@ import {
   Briefcase, 
   Star,
   Users,
-  Heart,
+  Heart
 } from 'lucide-react';
 import type { MatchResult } from '@/api/types/matchTypes';
 import { ConnectionDialog } from '@/components/layout/ConnectionDialog';
@@ -55,12 +55,6 @@ export function MatchCard({ match, onViewProfile }: MatchCardProps) {
     if (score >= 60) return 'text-yellow-600';
     return 'text-red-600';
   };
-
-  // const getMatchScoreBgColor = (score: number) => {
-  //   if (score >= 80) return 'bg-green-500';
-  //   if (score >= 60) return 'bg-yellow-500';
-  //   return 'bg-red-500';
-  // };
 
   return (
     <>
