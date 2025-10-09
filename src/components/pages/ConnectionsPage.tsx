@@ -18,12 +18,17 @@ export default function ConnectionsPage() {
 
   // Filter connections based on active tab
   const filteredConnections = connections.filter((connection) => {
-    if (!user?._id) return false;
+    if (!user) return false;
+    
+    // Try different possible user ID fields
+    const userId = user._id || (user as any).id;
+    
+    if (!userId) return false;
     
     if (activeTab === 'sent') {
-      return connection.initiator._id === user._id;
+      return connection.initiator._id === userId;
     } else {
-      return connection.initiator._id !== user._id;
+      return connection.initiator._id !== userId;
     }
   });
 
