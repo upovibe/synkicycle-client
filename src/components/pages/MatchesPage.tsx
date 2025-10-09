@@ -85,8 +85,17 @@ export function MatchesPage() {
           disabled={loading}
           className="shrink-0"
         >
-          <RefreshCw className={`h-4 w-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
-          Refresh Matches
+          {loading ? (
+            <>
+              <RefreshCw className="h-4 w-4 mr-2 animate-spin" />
+              Refreshing...
+            </>
+          ) : (
+            <>
+              <RefreshCw className="h-4 w-4 mr-2" />
+              Refresh Matches
+            </>
+          )}
         </Button>
       </div>
 
@@ -166,9 +175,19 @@ export function MatchesPage() {
               : `No ${activeFilter} matches found. Try a different filter.`
             }
           </p>
-          <Button onClick={fetchMatches}>
-            <RefreshCw className="h-4 w-4 mr-2" />
-            Refresh Matches
+          <Button onClick={fetchMatches} disabled={loading}>
+            {loading ? (
+              <>
+                <RefreshCw className="h-4 w-4 mr-2 animate-spin" />
+                Refreshing...
+                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin ml-2" />
+              </>
+            ) : (
+              <>
+                <RefreshCw className="h-4 w-4 mr-2" />
+                Refresh Matches
+              </>
+            )}
           </Button>
         </div>
       ) : (
@@ -183,12 +202,9 @@ export function MatchesPage() {
       )}
 
       {/* Loading Overlay */}
-      {loading && matches.length > 0 && (
+      {loading && (
         <div className="fixed inset-0 bg-black/20 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 flex items-center gap-3">
-            <RefreshCw className="h-5 w-5 animate-spin text-primary" />
-            <span className="text-gray-700">Refreshing matches...</span>
-          </div>
+          <LoaderOne />
         </div>
       )}
     </div>
