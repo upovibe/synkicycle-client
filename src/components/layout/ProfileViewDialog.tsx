@@ -13,8 +13,9 @@ import {
 } from "@/components/ui/dialog";
 import { useAuthContext } from "@/providers/AuthProvider";
 import { useAuthStore } from "@/api/stores/authStore";
-import { Edit, Mail, Phone, Briefcase, Calendar, CheckCircle, X } from "lucide-react";
 import toast from "react-hot-toast";
+import { Edit, Mail, Phone, Briefcase, Calendar, CheckCircle, X, User, AtSign } from "lucide-react";
+import { Separator } from "@/components/ui/separator";
 
 interface ProfileViewDialogProps {
   open: boolean;
@@ -144,7 +145,7 @@ export function ProfileViewDialog({ open, onOpenChange }: ProfileViewDialogProps
               {/* Name - Editable */}
               <div className="space-y-2">
                 <Label htmlFor="name" className="flex items-center gap-2">
-                  <Edit className="h-4 w-4 text-gray-500" />
+                  <User className="h-4 w-4 text-gray-500" />
                   Full Name *
                 </Label>
                 <Input
@@ -160,7 +161,7 @@ export function ProfileViewDialog({ open, onOpenChange }: ProfileViewDialogProps
               {/* Username - Editable */}
               <div className="space-y-2">
                 <Label htmlFor="username" className="flex items-center gap-2">
-                  <Edit className="h-4 w-4 text-gray-500" />
+                  <AtSign className="h-4 w-4 text-gray-500" />
                   Username *
                 </Label>
                 <Input
@@ -190,6 +191,8 @@ export function ProfileViewDialog({ open, onOpenChange }: ProfileViewDialogProps
               </div>
             </div>
           </div>
+
+          <Separator />
 
           {/* Professional Information */}
           <div className="space-y-4">
@@ -230,6 +233,8 @@ export function ProfileViewDialog({ open, onOpenChange }: ProfileViewDialogProps
             </div>
           </div>
 
+          <Separator />
+
           {/* Interests */}
           <div className="space-y-4">
             <h3 className="text-lg font-semibold text-gray-900">Interests</h3>
@@ -267,6 +272,8 @@ export function ProfileViewDialog({ open, onOpenChange }: ProfileViewDialogProps
               )}
             </div>
           </div>
+
+          <Separator />
 
           {/* Account Information - Read Only */}
           <div className="space-y-4">
