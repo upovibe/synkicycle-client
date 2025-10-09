@@ -7,7 +7,6 @@ import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
 import { 
   MessageCircle, 
-  Eye, 
   Briefcase, 
   Star,
   Users,
@@ -18,10 +17,9 @@ import { ConnectionDialog } from '@/components/layout/ConnectionDialog';
 
 interface MatchCardProps {
   match: MatchResult;
-  onViewProfile?: (userId: string) => void;
 }
 
-export function MatchCard({ match, onViewProfile }: MatchCardProps) {
+export function MatchCard({ match }: MatchCardProps) {
   const [showConnectionDialog, setShowConnectionDialog] = useState(false);
 
   const getConnectionTypeIcon = (type: string) => {
@@ -58,7 +56,7 @@ export function MatchCard({ match, onViewProfile }: MatchCardProps) {
 
   return (
     <>
-      <div className="bg-white border rounded-lg p-6 hover:shadow-lg transition-all duration-200 hover:border-primary/20">
+      <div className="bg-white border rounded-lg p-6 hover:shadow-lg transition-all duration-200 hover:border-primary/20 flex flex-col h-full">
         {/* User Info Header */}
         <div className="flex items-center space-x-3 mb-4">
           <Avatar className="h-12 w-12">
@@ -122,7 +120,7 @@ export function MatchCard({ match, onViewProfile }: MatchCardProps) {
 
         {/* Interests */}
         {match.user.interests && match.user.interests.length > 0 && (
-          <div className="mb-4">
+          <div className="mb-4 mt-auto">
             <p className="text-xs font-medium text-gray-600 mb-2">Interests</p>
             <div className="flex flex-wrap gap-1">
               {match.user.interests.slice(0, 3).map((interest, index) => (
@@ -140,23 +138,14 @@ export function MatchCard({ match, onViewProfile }: MatchCardProps) {
         )}
 
         {/* Action Buttons */}
-        <div className="flex space-x-2">
-          <Button 
-            size="sm" 
-            className="flex-1"
-            onClick={() => setShowConnectionDialog(true)}
-          >
-            <MessageCircle className="h-4 w-4 mr-2" />
-            Connect
-          </Button>
-          <Button 
-            size="sm" 
-            variant="outline"
-            onClick={() => onViewProfile?.(match.user.id)}
-          >
-            <Eye className="h-4 w-4" />
-          </Button>
-        </div>
+        <Button 
+          size="sm" 
+          className="w-full mt-auto"
+          onClick={() => setShowConnectionDialog(true)}
+        >
+          <MessageCircle className="h-4 w-4 mr-2" />
+          Connect
+        </Button>
       </div>
 
       {/* Connection Dialog */}

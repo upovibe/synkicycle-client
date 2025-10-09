@@ -118,49 +118,50 @@ export function ConnectionDialog({
         </div>
 
         <div className="space-y-4">
-          {/* AI Generated Message */}
-          {isGeneratingMessage ? (
-            <div className="flex items-center justify-center p-4 bg-gray-50 rounded-lg">
-              <Loader2 className="h-4 w-4 animate-spin mr-2" />
-              <span className="text-sm text-gray-600">Generating personalized message...</span>
+          {/* Message Input */}
+          <div className="space-y-2">
+            <div className="flex items-center justify-between">
+              <Label htmlFor="message">Your Message</Label>
+              {!aiGeneratedMessage && (
+                <Button 
+                  variant="outline" 
+                  size="sm"
+                  onClick={handleGenerateMessage}
+                  disabled={isGeneratingMessage}
+                >
+                  {isGeneratingMessage ? (
+                    <>
+                      <Loader2 className="h-3 w-3 mr-1 animate-spin" />
+                      Generating...
+                    </>
+                  ) : (
+                    <>
+                      <Sparkles className="h-3 w-3 mr-1" />
+                      AI Generate
+                    </>
+                  )}
+                </Button>
+              )}
             </div>
-          ) : aiGeneratedMessage ? (
-            <div className="space-y-2">
-              <div className="flex items-center gap-2">
-                <Label className="text-sm font-medium">AI Suggested Message</Label>
+            <Textarea
+              id="message"
+              placeholder={isGeneratingMessage ? "Generating personalized message..." : "Customize your message or generate an AI suggestion..."}
+              value={customMessage}
+              onChange={(e) => setCustomMessage(e.target.value)}
+              className="min-h-[100px]"
+              disabled={isGeneratingMessage}
+            />
+            <div className="flex items-center justify-between">
+              <p className="text-xs text-gray-500">
+                {customMessage.length}/500 characters
+              </p>
+              {aiGeneratedMessage && (
                 <Badge variant="secondary" className="text-xs">
                   <Sparkles className="h-3 w-3 mr-1" />
                   AI Generated
                 </Badge>
-              </div>
-              <div className="bg-blue-50 p-3 rounded-lg border border-blue-200">
-                <p className="text-sm text-gray-700">{aiGeneratedMessage}</p>
-              </div>
+              )}
             </div>
-          ) : (
-            <Button 
-              variant="outline" 
-              onClick={handleGenerateMessage}
-              className="w-full"
-            >
-              <Sparkles className="h-4 w-4 mr-2" />
-              Generate AI Message
-            </Button>
-          )}
-
-          {/* Custom Message Input */}
-          <div className="space-y-2">
-            <Label htmlFor="message">Your Message</Label>
-            <Textarea
-              id="message"
-              placeholder="Customize your message or use the AI suggestion above..."
-              value={customMessage}
-              onChange={(e) => setCustomMessage(e.target.value)}
-              className="min-h-[100px]"
-            />
-            <p className="text-xs text-gray-500">
-              {customMessage.length}/500 characters
-            </p>
           </div>
         </div>
 
