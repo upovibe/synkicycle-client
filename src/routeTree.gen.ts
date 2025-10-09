@@ -13,6 +13,7 @@ import { Route as NetworkRouteImport } from './routes/network'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as NetworkIndexRouteImport } from './routes/network/index'
+import { Route as NetworkMessagesRouteImport } from './routes/network/messages'
 import { Route as NetworkMatchesRouteImport } from './routes/network/matches'
 import { Route as NetworkConnectionsRouteImport } from './routes/network/connections'
 import { Route as AuthRegisterRouteImport } from './routes/auth/register'
@@ -36,6 +37,11 @@ const IndexRoute = IndexRouteImport.update({
 const NetworkIndexRoute = NetworkIndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => NetworkRoute,
+} as any)
+const NetworkMessagesRoute = NetworkMessagesRouteImport.update({
+  id: '/messages',
+  path: '/messages',
   getParentRoute: () => NetworkRoute,
 } as any)
 const NetworkMatchesRoute = NetworkMatchesRouteImport.update({
@@ -67,6 +73,7 @@ export interface FileRoutesByFullPath {
   '/auth/register': typeof AuthRegisterRoute
   '/network/connections': typeof NetworkConnectionsRoute
   '/network/matches': typeof NetworkMatchesRoute
+  '/network/messages': typeof NetworkMessagesRoute
   '/network/': typeof NetworkIndexRoute
 }
 export interface FileRoutesByTo {
@@ -76,6 +83,7 @@ export interface FileRoutesByTo {
   '/auth/register': typeof AuthRegisterRoute
   '/network/connections': typeof NetworkConnectionsRoute
   '/network/matches': typeof NetworkMatchesRoute
+  '/network/messages': typeof NetworkMessagesRoute
   '/network': typeof NetworkIndexRoute
 }
 export interface FileRoutesById {
@@ -87,6 +95,7 @@ export interface FileRoutesById {
   '/auth/register': typeof AuthRegisterRoute
   '/network/connections': typeof NetworkConnectionsRoute
   '/network/matches': typeof NetworkMatchesRoute
+  '/network/messages': typeof NetworkMessagesRoute
   '/network/': typeof NetworkIndexRoute
 }
 export interface FileRouteTypes {
@@ -99,6 +108,7 @@ export interface FileRouteTypes {
     | '/auth/register'
     | '/network/connections'
     | '/network/matches'
+    | '/network/messages'
     | '/network/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -108,6 +118,7 @@ export interface FileRouteTypes {
     | '/auth/register'
     | '/network/connections'
     | '/network/matches'
+    | '/network/messages'
     | '/network'
   id:
     | '__root__'
@@ -118,6 +129,7 @@ export interface FileRouteTypes {
     | '/auth/register'
     | '/network/connections'
     | '/network/matches'
+    | '/network/messages'
     | '/network/'
   fileRoutesById: FileRoutesById
 }
@@ -155,6 +167,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/network/'
       preLoaderRoute: typeof NetworkIndexRouteImport
+      parentRoute: typeof NetworkRoute
+    }
+    '/network/messages': {
+      id: '/network/messages'
+      path: '/messages'
+      fullPath: '/network/messages'
+      preLoaderRoute: typeof NetworkMessagesRouteImport
       parentRoute: typeof NetworkRoute
     }
     '/network/matches': {
@@ -203,12 +222,14 @@ const AuthRouteWithChildren = AuthRoute._addFileChildren(AuthRouteChildren)
 interface NetworkRouteChildren {
   NetworkConnectionsRoute: typeof NetworkConnectionsRoute
   NetworkMatchesRoute: typeof NetworkMatchesRoute
+  NetworkMessagesRoute: typeof NetworkMessagesRoute
   NetworkIndexRoute: typeof NetworkIndexRoute
 }
 
 const NetworkRouteChildren: NetworkRouteChildren = {
   NetworkConnectionsRoute: NetworkConnectionsRoute,
   NetworkMatchesRoute: NetworkMatchesRoute,
+  NetworkMessagesRoute: NetworkMessagesRoute,
   NetworkIndexRoute: NetworkIndexRoute,
 }
 

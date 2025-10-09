@@ -2,8 +2,9 @@
 import React, { useState, useEffect } from "react";
 import { Sidebar, SidebarBody, SidebarLink } from "../ui/sidebar";
 import {
-  Network,
-  Users,
+  Home,
+  Sparkles,
+  UserCheck,
   MessageSquare,
   Settings,
   LogOut,
@@ -70,19 +71,26 @@ export default function NetworkHubLayout({ children }: NetworkHubLayoutProps) {
       label: "Network Hub",
       href: "/network",
       icon: (
-        <Network className="h-5 w-5 shrink-0 text-neutral-700 dark:text-neutral-200" />
+        <Home className="h-5 w-5 shrink-0 text-neutral-700 dark:text-neutral-200" />
       ),
     },
     {
       label: "AI Matches",
       href: "/network/matches",
       icon: (
-        <Users className="h-5 w-5 shrink-0 text-neutral-700 dark:text-neutral-200" />
+        <Sparkles className="h-5 w-5 shrink-0 text-neutral-700 dark:text-neutral-200" />
       ),
     },
     {
       label: "Connections",
       href: "/network/connections",
+      icon: (
+        <UserCheck className="h-5 w-5 shrink-0 text-neutral-700 dark:text-neutral-200" />
+      ),
+    },
+    {
+      label: "Messages",
+      href: "/network/messages",
       icon: (
         <MessageSquare className="h-5 w-5 shrink-0 text-neutral-700 dark:text-neutral-200" />
       ),
