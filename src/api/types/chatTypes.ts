@@ -25,11 +25,13 @@ export interface Message {
   _id: string;
   uuid: string;
   connectionId: string;
-  senderId: User | string;
-  receiverId: User | string;
+  senderId: string;
+  receiverId: string;
+  sender: User;
+  receiver: User;
   content: string;
   messageType: 'text' | 'image' | 'file' | 'system';
-  status: 'sent' | 'delivered' | 'read';
+  status: 'sent' | 'delivered' | 'read' | 'sending' | 'failed';
   readAt?: string;
   createdAt: string;
   updatedAt: string;

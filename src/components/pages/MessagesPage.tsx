@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useChatStore } from '@/api/stores/chatStore';
-import { useAuthContext } from '@/providers/AuthProvider';
 import type { Connection } from '@/api/types/chatTypes';
 import { ChatList } from '@/components/chat/ChatList';
+import { ChatBox } from '@/components/chat/ChatBox';
 import { LoaderOne } from '@/components/ui/loader';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft } from 'lucide-react';
@@ -78,17 +78,14 @@ export default function MessagesPage() {
               </Button>
             </div>
             <div className="flex-1 overflow-hidden">
-              {/* TODO: Chat box component will go here */}
-              <div className="flex items-center justify-center h-full text-muted-foreground">
-                Chat box coming soon...
-              </div>
+              <ChatBox connection={selectedConnection} />
             </div>
           </div>
         )}
       </div>
 
       {/* Desktop Layout - Side by side */}
-      <div className="hidden md:flex gap-4 w-full h-full p-4 bg-muted/30">
+      <div className="hidden md:flex gap-4 w-full h-full">
         {/* Left Section - Chat List */}
         <div className="w-1/3 min-w-[320px]">
           <ChatList
@@ -100,16 +97,7 @@ export default function MessagesPage() {
 
         {/* Right Section - Chat Box */}
         <div className="flex-1">
-          {/* TODO: Chat box component will go here */}
-          {selectedConnection ? (
-            <div className="flex items-center justify-center h-full bg-background border rounded-lg text-muted-foreground">
-              Chat box coming soon...
-            </div>
-          ) : (
-            <div className="flex items-center justify-center h-full bg-background border rounded-lg text-muted-foreground">
-              Select a conversation to start messaging
-            </div>
-          )}
+          <ChatBox connection={selectedConnection} />
         </div>
       </div>
     </div>
