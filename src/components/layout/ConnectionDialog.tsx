@@ -69,7 +69,6 @@ export function ConnectionDialog({
       });
 
       if (connection) {
-        toast.success(`Connection request sent to ${targetUser.name}!`);
         onOpenChange(false);
         
         // Reset form
