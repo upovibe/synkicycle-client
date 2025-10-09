@@ -11,10 +11,11 @@ import {
   DialogTitle,
   StickyDialogContent,
 } from "@/components/ui/dialog";
+import { InterestCombobox } from "@/components/ui/interest-combobox";
 import { useAuthContext } from "@/providers/AuthProvider";
 import { useAuthStore } from "@/api/stores/authStore";
 import toast from "react-hot-toast";
-import { Edit, Mail, Phone, Briefcase, Calendar, CheckCircle, X, User, AtSign } from "lucide-react";
+import { Edit, Mail, Phone, Briefcase, Calendar, CheckCircle, User, AtSign } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 
 interface ProfileViewDialogProps {
@@ -34,7 +35,6 @@ export function ProfileViewDialog({ open, onOpenChange }: ProfileViewDialogProps
     profession: user?.profession || '',
     interests: user?.interests || [],
   });
-  const [interestInput, setInterestInput] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   if (!user) return null;
@@ -50,6 +50,11 @@ export function ProfileViewDialog({ open, onOpenChange }: ProfileViewDialogProps
     
     if (!formData.username.trim()) {
       toast.error('Username is required');
+      return;
+    }
+
+    if (formData.interests.length < 5) {
+      toast.error('Please select at least 5 interests');
       return;
     }
 
@@ -74,29 +79,11 @@ export function ProfileViewDialog({ open, onOpenChange }: ProfileViewDialogProps
     });
   };
 
-  const addInterest = () => {
-    const trimmedInterest = interestInput.trim();
-    if (trimmedInterest && !formData.interests.includes(trimmedInterest)) {
-      setFormData({
-        ...formData,
-        interests: [...formData.interests, trimmedInterest],
-      });
-      setInterestInput('');
-    }
-  };
-
-  const removeInterest = (interestToRemove: string) => {
+  const handleInterestsChange = (interests: string[]) => {
     setFormData({
       ...formData,
-      interests: formData.interests.filter((interest: string) => interest !== interestToRemove),
+      interests,
     });
-  };
-
-  const handleInterestKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Enter') {
-      e.preventDefault();
-      addInterest();
-    }
   };
 
   return (
@@ -237,40 +224,13 @@ export function ProfileViewDialog({ open, onOpenChange }: ProfileViewDialogProps
 
           {/* Interests */}
           <div className="space-y-4">
-            <h3 className="text-lg font-semibold text-gray-900">Interests</h3>
-            <div className="space-y-2">
-              <div className="flex gap-2">
-                <Input
-                  value={interestInput}
-                  onChange={(e) => setInterestInput(e.target.value)}
-                  onKeyPress={handleInterestKeyPress}
-                  placeholder="Add an interest (press Enter)"
-                  className="flex-1"
-                />
-                <Button type="button" onClick={addInterest} variant="outline" size="sm">
-                  Add
-                </Button>
-              </div>
-              {formData.interests.length > 0 && (
-                <div className="flex flex-wrap gap-2">
-                  {formData.interests.map((interest: string, index: number) => (
-                    <div
-                      key={index}
-                      className="flex items-center gap-1 bg-primary/10 text-primary px-2 py-1 rounded-md text-sm"
-                    >
-                      <span>{interest}</span>
-                      <button
-                        type="button"
-                        onClick={() => removeInterest(interest)}
-                        className="ml-1 hover:text-primary/70 focus:outline-none"
-                      >
-                        <X className="h-3 w-3" />
-                      </button>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
+            <h3 className="text-lg font-semibold text-gray-900">Interests *</h3>
+            <InterestCombobox
+              selectedInterests={formData.interests}
+              onInterestsChange={handleInterestsChange}
+              placeholder="Select at least 5 interests..."
+              minInterests={5}
+            />
           </div>
 
           <Separator />
