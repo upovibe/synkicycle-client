@@ -18,12 +18,16 @@ export default function ConnectionsPage() {
     fetchConnections();
   }, [fetchConnections]);
 
-  // Clear selection if selected connection is no longer in the list (deleted via socket)
+  // Update selected connection when connections change (for real-time updates)
   useEffect(() => {
     if (selectedConnection) {
-      const stillExists = connections.find(conn => conn && conn._id && conn._id === selectedConnection._id);
-      if (!stillExists) {
+      const updatedConnection = connections.find(conn => conn && conn._id && conn._id === selectedConnection._id);
+      if (!updatedConnection) {
+        // Connection was deleted, clear selection
         setSelectedConnection(null);
+      } else if (updatedConnection.status !== selectedConnection.status) {
+        // Connection status changed, update the selected connection
+        setSelectedConnection(updatedConnection);
       }
     }
   }, [connections, selectedConnection]);
