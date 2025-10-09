@@ -19,7 +19,7 @@ export default function ConnectionsPage() {
   // Clear selection if selected connection is no longer in the list (deleted via socket)
   useEffect(() => {
     if (selectedConnection) {
-      const stillExists = connections.find(conn => conn._id === selectedConnection._id);
+      const stillExists = connections.find(conn => conn && conn._id && conn._id === selectedConnection._id);
       if (!stillExists) {
         setSelectedConnection(null);
       }

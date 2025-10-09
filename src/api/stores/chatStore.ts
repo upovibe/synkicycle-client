@@ -33,6 +33,9 @@ interface ChatState {
   // Typing indicators
   typingUsers: Record<string, Set<string>>; // connectionId -> Set of userIds
 
+  // Socket state
+  isSocketInitialized: boolean;
+
   // Actions - Connections
   fetchConnections: (params?: GetConnectionsParams) => Promise<void>;
   fetchConnection: (connectionId: string) => Promise<void>;
@@ -66,6 +69,7 @@ export const useChatStore = create<ChatState>((set, get) => ({
   messagesLoading: false,
   messagesError: null,
   typingUsers: {},
+  isSocketInitialized: false,
 
   // Fetch connections
   fetchConnections: async (params) => {
@@ -73,8 +77,9 @@ export const useChatStore = create<ChatState>((set, get) => ({
     try {
       const response: GetConnectionsResponse = await apiClient.get(CONNECTION_ENDPOINTS.GET_CONNECTIONS, { params });
       
-      // Sort connections by lastMessageAt (most recent first)
-      const sortedConnections = response.data.connections.sort((a, b) => {
+      // Filter out any invalid connections and sort by lastMessageAt (most recent first)
+      const validConnections = response.data.connections.filter(conn => conn && conn._id && conn.initiator);
+      const sortedConnections = validConnections.sort((a, b) => {
         const dateA = a.lastMessageAt ? new Date(a.lastMessageAt).getTime() : new Date(a.updatedAt).getTime();
         const dateB = b.lastMessageAt ? new Date(b.lastMessageAt).getTime() : new Date(b.updatedAt).getTime();
         return dateB - dateA;
@@ -231,7 +236,13 @@ export const useChatStore = create<ChatState>((set, get) => ({
 
   // Initialize Socket.io
   initializeSocket: (token) => {
+    // Only initialize once
+    if (get().isSocketInitialized) {
+      return;
+    }
+
     socketService.connect(token);
+    set({ isSocketInitialized: true });
 
     // New message event
     socketService.onNewMessage((data) => {
@@ -295,7 +306,7 @@ export const useChatStore = create<ChatState>((set, get) => ({
       
       set((state) => ({
         connections: state.connections.map((conn) =>
-          conn._id === connection._id ? connection : conn
+          conn && conn._id && conn._id === connection._id ? connection : conn
         ),
       }));
       
@@ -345,6 +356,7 @@ export const useChatStore = create<ChatState>((set, get) => ({
   // Disconnect Socket.io
   disconnectSocket: () => {
     socketService.disconnect();
+    set({ isSocketInitialized: false });
   },
 
   // Clear error
