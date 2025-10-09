@@ -95,23 +95,16 @@ export default function NetworkHubLayout({ children }: NetworkHubLayoutProps) {
       )}
     >
       <Sidebar open={open} setOpen={setOpen}>
-        <SidebarBody className="flex flex-col h-full">
-          {/* Header Section */}
-          <div className="flex-shrink-0">
+        <SidebarBody className="justify-between gap-10">
+          <div className="flex flex-1 flex-col overflow-x-hidden overflow-y-auto">
             {open ? <Logo /> : <LogoIcon />}
-          </div>
-          
-          {/* Scrollable Content Section */}
-          <div className="flex-1 overflow-y-auto overflow-x-hidden py-4">
-            <div className="flex flex-col gap-2">
+            <div className="mt-8 flex flex-col gap-2">
               {links.map((link, idx) => (
                 <SidebarLink key={idx} link={link} />
               ))}
             </div>
           </div>
-          
-          {/* Bottom Section */}
-          <div className="flex-shrink-0 flex flex-col gap-2">
+          <div className="flex flex-col gap-2">
             {bottomLinks.map((link, idx) => (
               <SidebarLink key={idx} link={link} />
             ))}
@@ -132,8 +125,8 @@ export default function NetworkHubLayout({ children }: NetworkHubLayoutProps) {
           </div>
         </SidebarBody>
       </Sidebar>
-      <div className="flex flex-1">
-        <div className="flex h-full w-full flex-1 flex-col bg-white p-2 md:p-10 dark:bg-neutral-900">
+      <div className="flex flex-1 overflow-hidden">
+        <div className="flex h-full w-full flex-1 flex-col bg-white p-2 md:p-10 dark:bg-neutral-900 overflow-y-auto">
           {children}
         </div>
       </div>

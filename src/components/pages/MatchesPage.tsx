@@ -179,13 +179,13 @@ export function MatchesPage() {
             {loading ? (
               <>
                 <RefreshCw className="h-4 w-4 mr-2 animate-spin" />
-                Refreshing...
+                <span className="hidden md:block">Refreshing...</span>
                 <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin ml-2" />
               </>
             ) : (
               <>
                 <RefreshCw className="h-4 w-4 mr-2" />
-                Refresh Matches
+                <span className="hidden md:block">Refresh Matches</span>
               </>
             )}
           </Button>
