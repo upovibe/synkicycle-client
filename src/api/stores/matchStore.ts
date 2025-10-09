@@ -22,6 +22,7 @@ interface MatchActions {
   fetchMatches: () => Promise<void>;
   generateConnectionMessage: (userId: string, connectionType?: 'professional' | 'social' | 'both') => Promise<string>;
   getUserProfile: (userId: string) => Promise<any>;
+  removeMatchByUserId: (userId: string) => void;
   clearError: () => void;
 }
 
@@ -90,6 +91,12 @@ export const useMatchStore = create<MatchStore>((set) => ({
       toast.error(errorMessage);
       throw new Error(errorMessage);
     }
+  },
+
+  removeMatchByUserId: (userId: string) => {
+    set((state) => ({
+      matches: state.matches.filter((match) => match.user.id !== userId),
+    }));
   },
 
   clearError: () => set({ error: null }),

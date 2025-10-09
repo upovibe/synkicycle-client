@@ -93,6 +93,11 @@ class SocketService {
     this.on('connection-declined', callback);
   }
 
+  // Match events
+  onMatchRemove(callback: (data: { userId: string; message: string }) => void) {
+    this.on('match:remove', callback);
+  }
+
   // Typing events
   onUserTyping(callback: (data: SocketTypingEvent) => void) {
     this.on('user-typing', callback);

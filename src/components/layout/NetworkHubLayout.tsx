@@ -15,6 +15,8 @@ import { useNavigate, Link } from "@tanstack/react-router";
 import toast from "react-hot-toast";
 import { ProfileCompletionDialog } from "@/components/layout/ProfileCompletionDialog";
 import { ProfileViewDialog } from "@/components/layout/ProfileViewDialog";
+import { useChatStore } from "@/api/stores/chatStore";
+import { useAuthStore } from "@/api/stores/authStore";
 
 interface NetworkHubLayoutProps {
   children: React.ReactNode
@@ -26,6 +28,15 @@ export default function NetworkHubLayout({ children }: NetworkHubLayoutProps) {
   const [open, setOpen] = useState(false);
   const [showProfileDialog, setShowProfileDialog] = useState(false);
   const [showProfileViewDialog, setShowProfileViewDialog] = useState(false);
+  const { initializeSocket } = useChatStore();
+  const { accessToken } = useAuthStore();
+
+  // Initialize Socket.io connection
+  useEffect(() => {
+    if (accessToken) {
+      initializeSocket(accessToken);
+    }
+  }, [accessToken, initializeSocket]);
 
   // Check if profile is incomplete
   const isProfileIncomplete = user && (!user.name || !user.username);

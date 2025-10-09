@@ -3,6 +3,7 @@
 import { MatchCard } from '@/components/ui/MatchCard';
 import { Button } from '@/components/ui/button';
 import { useMatchStore } from '@/api/stores/matchStore';
+import { socketService } from '@/services/socket.service';
 import { 
   RefreshCw, 
   Users, 
@@ -16,7 +17,7 @@ import { useState, useEffect } from 'react';
 import { LoaderOne } from '@/components/ui/loader';
 
 export function MatchesPage() {
-  const { matches, loading, error, fetchMatches } = useMatchStore();
+  const { matches, loading, error, fetchMatches, removeMatchByUserId } = useMatchStore();
   const [activeFilter, setActiveFilter] = useState<'all' | 'professional' | 'social' | 'both'>('all');
 
   const filteredMatches = matches.filter(match => {
@@ -40,6 +41,19 @@ export function MatchesPage() {
   useEffect(() => {
     fetchMatches();
   }, [fetchMatches]);
+
+  // Listen for real-time match removal events
+  useEffect(() => {
+    const handleMatchRemove = (data: { userId: string; message: string }) => {
+      removeMatchByUserId(data.userId);
+    };
+
+    socketService.onMatchRemove(handleMatchRemove);
+
+    return () => {
+      socketService.off('match:remove', handleMatchRemove);
+    };
+  }, [removeMatchByUserId]);
 
   if (loading && matches.length === 0) {
     return (
