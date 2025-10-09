@@ -129,6 +129,13 @@ class SocketService {
     if (!this.listeners.has(event)) {
       this.listeners.set(event, new Set());
     }
+    
+    // Check if this exact callback is already registered
+    const existingListeners = this.listeners.get(event);
+    if (existingListeners?.has(callback)) {
+      return; // Already registered, don't add again
+    }
+    
     this.listeners.get(event)?.add(callback);
     this.socket?.on(event, callback);
   }

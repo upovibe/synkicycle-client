@@ -108,9 +108,18 @@ export const useChatStore = create<ChatState>((set, get) => ({
   sendConnectionRequest: async (payload) => {
     try {
       const response: SendConnectionRequestResponse = await apiClient.post(CONNECTION_ENDPOINTS.SEND_REQUEST, payload);
-      set((state) => ({
-        connections: [response.data.connection, ...state.connections],
-      }));
+      
+      // Add connection only if it doesn't already exist
+      set((state) => {
+        const exists = state.connections.some(conn => conn._id === response.data.connection._id);
+        if (exists) {
+          return state; // Don't add duplicate
+        }
+        return {
+          connections: [response.data.connection, ...state.connections],
+        };
+      });
+      
       toast.success('Connection request sent successfully');
       return response.data.connection;
     } catch (error) {
@@ -241,6 +250,15 @@ export const useChatStore = create<ChatState>((set, get) => ({
       return;
     }
 
+    // Remove any existing listeners first to prevent duplicates
+    socketService.removeAllListeners('new-message');
+    socketService.removeAllListeners('message-read');
+    socketService.removeAllListeners('connection:new');
+    socketService.removeAllListeners('connection:updated');
+    socketService.removeAllListeners('connection:deleted');
+    socketService.removeAllListeners('user-typing');
+    socketService.removeAllListeners('user-stopped-typing');
+
     socketService.connect(token);
     set({ isSocketInitialized: true });
 
@@ -294,10 +312,20 @@ export const useChatStore = create<ChatState>((set, get) => ({
 
     // New connection event
     socketService.onNewConnection((data) => {
-      set((state) => ({
-        connections: [data.connection, ...state.connections],
-      }));
-      toast.success('New connection request received');
+      // Validate connection before adding
+      if (data.connection && data.connection._id && data.connection.initiator) {
+        set((state) => {
+          // Check if connection already exists to prevent duplicates
+          const exists = state.connections.some(conn => conn._id === data.connection._id);
+          if (exists) {
+            return state; // Don't add duplicate
+          }
+          return {
+            connections: [data.connection, ...state.connections],
+          };
+        });
+        toast.success('New connection request received');
+      }
     });
 
     // Connection updated event (handles accept)
