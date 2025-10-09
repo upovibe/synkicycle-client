@@ -1,21 +1,20 @@
 import { create } from 'zustand';
-import {
+import { apiClient } from '@/api/axios';
+import { CONNECTION_ENDPOINTS, MESSAGE_ENDPOINTS } from '@/api/endpoints/chatEndpoints';
+import type {
   Connection,
   Message,
   SendConnectionRequestPayload,
   SendMessagePayload,
   GetConnectionsParams,
   GetMessagesParams,
-} from '../types/chatTypes';
-import {
-  sendConnectionRequest as sendConnectionRequestAPI,
-  respondToConnectionRequest as respondToConnectionRequestAPI,
-  getUserConnections as getUserConnectionsAPI,
-  getConnection as getConnectionAPI,
-  sendMessage as sendMessageAPI,
-  getMessages as getMessagesAPI,
-  markMessagesAsRead as markMessagesAsReadAPI,
-} from '../endpoints/chatEndpoints';
+  SendConnectionRequestResponse,
+  RespondToConnectionResponse,
+  GetConnectionsResponse,
+  GetConnectionResponse,
+  SendMessageResponse,
+  GetMessagesResponse,
+} from '@/api/types/chatTypes';
 import { socketService } from '@/services/socket.service';
 import toast from 'react-hot-toast';
 
@@ -72,7 +71,7 @@ export const useChatStore = create<ChatState>((set, get) => ({
   fetchConnections: async (params) => {
     set({ connectionsLoading: true, connectionsError: null });
     try {
-      const response = await getUserConnectionsAPI(params);
+      const response: GetConnectionsResponse = await apiClient.get(CONNECTION_ENDPOINTS.GET_CONNECTIONS, { params });
       set({ connections: response.data.connections, connectionsLoading: false });
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Failed to fetch connections';
@@ -84,7 +83,7 @@ export const useChatStore = create<ChatState>((set, get) => ({
   // Fetch single connection
   fetchConnection: async (connectionId) => {
     try {
-      const response = await getConnectionAPI(connectionId);
+      const response: GetConnectionResponse = await apiClient.get(CONNECTION_ENDPOINTS.GET_CONNECTION(connectionId));
       set({ activeConnection: response.data.connection });
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Failed to fetch connection';
@@ -95,7 +94,7 @@ export const useChatStore = create<ChatState>((set, get) => ({
   // Send connection request
   sendConnectionRequest: async (payload) => {
     try {
-      const response = await sendConnectionRequestAPI(payload);
+      const response: SendConnectionRequestResponse = await apiClient.post(CONNECTION_ENDPOINTS.SEND_REQUEST, payload);
       set((state) => ({
         connections: [response.data.connection, ...state.connections],
       }));
@@ -111,7 +110,7 @@ export const useChatStore = create<ChatState>((set, get) => ({
   // Respond to connection request
   respondToConnection: async (connectionId, status) => {
     try {
-      const response = await respondToConnectionRequestAPI(connectionId, { status });
+      const response: RespondToConnectionResponse = await apiClient.put(CONNECTION_ENDPOINTS.RESPOND_REQUEST(connectionId), { status });
       set((state) => ({
         connections: state.connections.map((conn) =>
           conn._id === connectionId ? response.data.connection : conn
@@ -137,7 +136,7 @@ export const useChatStore = create<ChatState>((set, get) => ({
   fetchMessages: async (connectionId, params) => {
     set({ messagesLoading: true, messagesError: null });
     try {
-      const response = await getMessagesAPI(connectionId, params);
+      const response: GetMessagesResponse = await apiClient.get(MESSAGE_ENDPOINTS.GET_MESSAGES(connectionId), { params });
       set((state) => ({
         messages: {
           ...state.messages,
@@ -155,7 +154,7 @@ export const useChatStore = create<ChatState>((set, get) => ({
   // Send message
   sendMessage: async (payload) => {
     try {
-      const response = await sendMessageAPI(payload);
+      const response: SendMessageResponse = await apiClient.post(MESSAGE_ENDPOINTS.SEND_MESSAGE, payload);
       const newMessage = response.data.message;
 
       set((state) => ({
@@ -190,7 +189,7 @@ export const useChatStore = create<ChatState>((set, get) => ({
   // Mark messages as read
   markMessagesAsRead: async (connectionId, messageIds) => {
     try {
-      await markMessagesAsReadAPI(connectionId, messageIds ? { messageIds } : undefined);
+      await apiClient.put(MESSAGE_ENDPOINTS.MARK_AS_READ(connectionId), messageIds ? { messageIds } : undefined);
       
       set((state) => ({
         messages: {

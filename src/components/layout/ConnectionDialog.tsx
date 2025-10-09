@@ -17,6 +17,7 @@ import { Badge } from '@/components/ui/badge';
 import { Loader2, MessageCircle, Sparkles } from 'lucide-react';
 import type { MatchUser } from '@/api/types/matchTypes';
 import { useMatchStore } from '@/api/stores/matchStore';
+import { useChatStore } from '@/api/stores/chatStore';
 import toast from 'react-hot-toast';
 
 interface ConnectionDialogProps {
@@ -33,6 +34,7 @@ export function ConnectionDialog({
   connectionType 
 }: ConnectionDialogProps) {
   const { generateConnectionMessage } = useMatchStore();
+  const { sendConnectionRequest } = useChatStore();
   const [aiGeneratedMessage, setAiGeneratedMessage] = useState('');
   const [customMessage, setCustomMessage] = useState('');
   const [isGeneratingMessage, setIsGeneratingMessage] = useState(false);
@@ -60,17 +62,22 @@ export function ConnectionDialog({
 
     setIsSending(true);
     try {
-      // TODO: Implement actual connection sending logic
-      // For now, just simulate success
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      toast.success(`Connection request sent to ${targetUser.name}!`);
-      onOpenChange(false);
-      
-      // Reset form
-      setCustomMessage('');
-      setAiGeneratedMessage('');
+      // Send real connection request
+      const connection = await sendConnectionRequest({
+        receiverId: targetUser.id,
+        message: customMessage.trim(),
+      });
+
+      if (connection) {
+        toast.success(`Connection request sent to ${targetUser.name}!`);
+        onOpenChange(false);
+        
+        // Reset form
+        setCustomMessage('');
+        setAiGeneratedMessage('');
+      }
     } catch (error) {
+      console.error('Failed to send connection request:', error);
       toast.error('Failed to send connection request');
     } finally {
       setIsSending(false);

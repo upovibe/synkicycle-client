@@ -4,6 +4,7 @@ import { Sidebar, SidebarBody, SidebarLink } from "../ui/sidebar";
 import {
   Network,
   Users,
+  MessageSquare,
   Settings,
   LogOut,
 } from "lucide-react";
@@ -66,6 +67,13 @@ export default function NetworkHubLayout({ children }: NetworkHubLayoutProps) {
       href: "/network/matches",
       icon: (
         <Users className="h-5 w-5 shrink-0 text-neutral-700 dark:text-neutral-200" />
+      ),
+    },
+    {
+      label: "Connections",
+      href: "/network/connections",
+      icon: (
+        <MessageSquare className="h-5 w-5 shrink-0 text-neutral-700 dark:text-neutral-200" />
       ),
     },
   ];
