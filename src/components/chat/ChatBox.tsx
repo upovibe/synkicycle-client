@@ -212,9 +212,9 @@ export function ChatBox({ connection }: ChatBoxProps) {
   }
 
   return (
-    <Card className="flex flex-col h-full border-0 rounded-none md:border md:rounded-lg shadow-none md:shadow-sm md:py-0">
+    <Card className="flex flex-col h-full border-0 rounded-none md:border md:rounded-lg shadow-none md:shadow-sm pb-0 px-0.5 md:py-0">
       {/* Header */}
-      <CardHeader className="border-b p-4 shrink-0">
+      <CardHeader className="border-b p-0 md:p-4 !pb-4 shrink-0">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             <Avatar className="h-10 w-10 ring-2 ring-border">
@@ -240,7 +240,7 @@ export function ChatBox({ connection }: ChatBoxProps) {
       </CardHeader>
 
       {/* Messages */}
-      <CardContent className="flex-1 overflow-y-auto p-4 space-y-4">
+      <CardContent className="flex-1 overflow-y-auto px-0.5 md:px-4">
         {messagesLoading ? (
           <div className="flex items-center justify-center h-full">
             <LoaderOne />
@@ -350,7 +350,7 @@ export function ChatBox({ connection }: ChatBoxProps) {
       </CardContent>
 
       {/* Input */}
-      <div className="border-t p-4 shrink-0">
+      <div className="border-t px-0.5 md:px-4 py-4 shrink-0">
         <div className="flex items-end gap-2">
           <Button variant="ghost" size="icon" className="shrink-0">
             <Paperclip className="h-5 w-5" />
