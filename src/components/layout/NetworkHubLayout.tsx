@@ -13,6 +13,7 @@ import { useAuthContext } from "@/providers/AuthProvider";
 import { useNavigate } from "@tanstack/react-router";
 import toast from "react-hot-toast";
 import { ProfileCompletionDialog } from "@/components/layout/ProfileCompletionDialog";
+import { ProfileViewDialog } from "@/components/layout/ProfileViewDialog";
 
 interface NetworkHubLayoutProps {
   children: React.ReactNode
@@ -23,6 +24,7 @@ export default function NetworkHubLayout({ children }: NetworkHubLayoutProps) {
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
   const [showProfileDialog, setShowProfileDialog] = useState(false);
+  const [showProfileViewDialog, setShowProfileViewDialog] = useState(false);
 
   // Check if profile is incomplete
   const isProfileIncomplete = user && (!user.name || !user.username);
@@ -116,6 +118,7 @@ export default function NetworkHubLayout({ children }: NetworkHubLayoutProps) {
                       {(user?.name || user?.username || 'U').charAt(0).toUpperCase()}
                     </div>
                   ),
+                  onClick: () => setShowProfileViewDialog(true),
                 }}
               />
             </div>
@@ -132,6 +135,12 @@ export default function NetworkHubLayout({ children }: NetworkHubLayoutProps) {
       <ProfileCompletionDialog 
         open={showProfileDialog} 
         onOpenChange={setShowProfileDialog} 
+      />
+      
+      {/* Profile View Dialog */}
+      <ProfileViewDialog 
+        open={showProfileViewDialog} 
+        onOpenChange={setShowProfileViewDialog} 
       />
     </div>
   );
