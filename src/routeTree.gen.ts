@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as NetworkRouteImport } from './routes/network'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as NetworkMatchesRouteImport } from './routes/network/matches'
 import { Route as AuthRegisterRouteImport } from './routes/auth/register'
 import { Route as AuthLoginRouteImport } from './routes/auth/login'
 
@@ -30,6 +31,11 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const NetworkMatchesRoute = NetworkMatchesRouteImport.update({
+  id: '/matches',
+  path: '/matches',
+  getParentRoute: () => NetworkRoute,
+} as any)
 const AuthRegisterRoute = AuthRegisterRouteImport.update({
   id: '/register',
   path: '/register',
@@ -44,37 +50,59 @@ const AuthLoginRoute = AuthLoginRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRouteWithChildren
-  '/network': typeof NetworkRoute
+  '/network': typeof NetworkRouteWithChildren
   '/auth/login': typeof AuthLoginRoute
   '/auth/register': typeof AuthRegisterRoute
+  '/network/matches': typeof NetworkMatchesRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRouteWithChildren
-  '/network': typeof NetworkRoute
+  '/network': typeof NetworkRouteWithChildren
   '/auth/login': typeof AuthLoginRoute
   '/auth/register': typeof AuthRegisterRoute
+  '/network/matches': typeof NetworkMatchesRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/auth': typeof AuthRouteWithChildren
-  '/network': typeof NetworkRoute
+  '/network': typeof NetworkRouteWithChildren
   '/auth/login': typeof AuthLoginRoute
   '/auth/register': typeof AuthRegisterRoute
+  '/network/matches': typeof NetworkMatchesRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/auth' | '/network' | '/auth/login' | '/auth/register'
+  fullPaths:
+    | '/'
+    | '/auth'
+    | '/network'
+    | '/auth/login'
+    | '/auth/register'
+    | '/network/matches'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/auth' | '/network' | '/auth/login' | '/auth/register'
-  id: '__root__' | '/' | '/auth' | '/network' | '/auth/login' | '/auth/register'
+  to:
+    | '/'
+    | '/auth'
+    | '/network'
+    | '/auth/login'
+    | '/auth/register'
+    | '/network/matches'
+  id:
+    | '__root__'
+    | '/'
+    | '/auth'
+    | '/network'
+    | '/auth/login'
+    | '/auth/register'
+    | '/network/matches'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthRoute: typeof AuthRouteWithChildren
-  NetworkRoute: typeof NetworkRoute
+  NetworkRoute: typeof NetworkRouteWithChildren
 }
 
 declare module '@tanstack/react-router' {
@@ -99,6 +127,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/network/matches': {
+      id: '/network/matches'
+      path: '/matches'
+      fullPath: '/network/matches'
+      preLoaderRoute: typeof NetworkMatchesRouteImport
+      parentRoute: typeof NetworkRoute
     }
     '/auth/register': {
       id: '/auth/register'
@@ -129,10 +164,21 @@ const AuthRouteChildren: AuthRouteChildren = {
 
 const AuthRouteWithChildren = AuthRoute._addFileChildren(AuthRouteChildren)
 
+interface NetworkRouteChildren {
+  NetworkMatchesRoute: typeof NetworkMatchesRoute
+}
+
+const NetworkRouteChildren: NetworkRouteChildren = {
+  NetworkMatchesRoute: NetworkMatchesRoute,
+}
+
+const NetworkRouteWithChildren =
+  NetworkRoute._addFileChildren(NetworkRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthRoute: AuthRouteWithChildren,
-  NetworkRoute: NetworkRoute,
+  NetworkRoute: NetworkRouteWithChildren,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

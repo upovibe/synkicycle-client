@@ -10,7 +10,7 @@ import {
 import { motion } from "motion/react";
 import { cn } from "@/lib/utils";
 import { useAuthContext } from "@/providers/AuthProvider";
-import { useNavigate } from "@tanstack/react-router";
+import { useNavigate, Link } from "@tanstack/react-router";
 import toast from "react-hot-toast";
 import { ProfileCompletionDialog } from "@/components/layout/ProfileCompletionDialog";
 import { ProfileViewDialog } from "@/components/layout/ProfileViewDialog";
@@ -56,14 +56,14 @@ export default function NetworkHubLayout({ children }: NetworkHubLayoutProps) {
   const links = [
     {
       label: "Network Hub",
-      href: "#",
+      href: "/network",
       icon: (
         <Network className="h-5 w-5 shrink-0 text-neutral-700 dark:text-neutral-200" />
       ),
     },
     {
-      label: "Connections",
-      href: "#",
+      label: "AI Matches",
+      href: "/network/matches",
       icon: (
         <Users className="h-5 w-5 shrink-0 text-neutral-700 dark:text-neutral-200" />
       ),
