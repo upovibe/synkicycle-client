@@ -53,8 +53,8 @@ export function ProfileViewDialog({ open, onOpenChange }: ProfileViewDialogProps
       return;
     }
 
-    if (formData.interests.length < 5) {
-      toast.error('Please select at least 5 interests');
+    if (formData.interests.length === 0) {
+      toast.error('Please select at least 1 interest');
       return;
     }
 
@@ -228,8 +228,8 @@ export function ProfileViewDialog({ open, onOpenChange }: ProfileViewDialogProps
             <InterestCombobox
               selectedInterests={formData.interests}
               onInterestsChange={handleInterestsChange}
-              placeholder="Select at least 5 interests..."
-              minInterests={5}
+              placeholder="Select up to 5 interests..."
+              maxInterests={5}
             />
           </div>
 

@@ -24,7 +24,7 @@ interface InterestComboboxProps {
   onInterestsChange: (interests: string[]) => void
   placeholder?: string
   className?: string
-  minInterests?: number
+  maxInterests?: number
 }
 
 export function InterestCombobox({
@@ -32,7 +32,7 @@ export function InterestCombobox({
   onInterestsChange,
   placeholder = "Select interests...",
   className,
-  minInterests = 5
+  maxInterests = 5
 }: InterestComboboxProps) {
   const [open, setOpen] = React.useState(false)
   const [searchValue, setSearchValue] = React.useState("")
@@ -49,8 +49,8 @@ export function InterestCombobox({
     if (selectedInterests.includes(interest)) {
       // Remove interest if already selected
       onInterestsChange(selectedInterests.filter(i => i !== interest))
-    } else {
-      // Add interest if not selected
+    } else if (selectedInterests.length < maxInterests) {
+      // Add interest if not selected and under max limit
       onInterestsChange([...selectedInterests, interest])
     }
     setSearchValue("")
@@ -118,19 +118,17 @@ export function InterestCombobox({
             <span className="text-sm font-medium text-gray-700">
               Selected Interests ({selectedInterests.length})
             </span>
-            {minInterests && (
-              <span className={cn(
-                "text-xs",
-                selectedInterests.length >= minInterests 
-                  ? "text-green-600" 
-                  : "text-red-600"
-              )}>
-                {selectedInterests.length >= minInterests 
-                  ? "✓ Minimum reached" 
-                  : `Need ${minInterests - selectedInterests.length} more`
-                }
-              </span>
-            )}
+            <span className={cn(
+              "text-xs",
+              selectedInterests.length > 0 
+                ? "text-green-600" 
+                : "text-gray-500"
+            )}>
+              {selectedInterests.length > 0 
+                ? `${selectedInterests.length}/${maxInterests} selected` 
+                : `Select up to ${maxInterests} interests`
+              }
+            </span>
           </div>
           <div className="flex flex-wrap gap-2">
             {selectedInterests.map((interest) => (
