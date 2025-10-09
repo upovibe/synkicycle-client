@@ -77,8 +77,8 @@ export function ConnectionsList({
   };
 
   return (
-    <Card className="flex flex-col h-full border-0 rounded-none md:border md:rounded-lg shadow-none md:shadow-sm">
-      <CardHeader className="border-b">
+    <Card className="flex flex-col h-full border-0 rounded-none md:border md:rounded-lg shadow-none md:shadow-sm py-0">
+      <CardHeader className="border-b p-0 md:p-5">
         <CardTitle className="text-xl">My Connections</CardTitle>
         
         {/* Search */}
@@ -143,7 +143,7 @@ export function ConnectionsList({
                   key={connection._id}
                   onClick={() => onSelectConnection(connection)}
                   className={cn(
-                    'flex items-center p-4 cursor-pointer transition-all duration-200',
+                    'flex items-center p-0.5 md:p-4 cursor-pointer transition-all duration-200',
                     'hover:bg-muted/50',
                     isSelected && 'bg-primary/10 border-l-4 border-l-primary',
                     isUnread && 'bg-blue-50/50 dark:bg-blue-950/20'

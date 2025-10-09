@@ -88,8 +88,8 @@ export function ConnectionDetails({ connection }: ConnectionDetailsProps) {
   };
 
   return (
-    <Card className="flex flex-col h-full border-0 rounded-none md:border md:rounded-lg shadow-none md:shadow-sm">
-      <CardHeader className="border-b">
+    <Card className="flex flex-col h-full border-0 rounded-none md:border md:rounded-lg shadow-none md:shadow-sm md:py-0">
+      <CardHeader className="border-b p-0 md:p-5">
         <div className="flex items-center space-x-4">
           <Avatar className="h-16 w-16">
             <AvatarImage src={otherParticipant.avatar} />
@@ -99,25 +99,27 @@ export function ConnectionDetails({ connection }: ConnectionDetailsProps) {
           </Avatar>
           
           <div className="flex-1">
-            <h2 className="text-xl font-semibold">
-              {otherParticipant.name || otherParticipant.username || 'Unknown User'}
-            </h2>
-            <p className="text-muted-foreground">
+            <div className="flex items-center gap-2 mb-1">
+              <h2 className="text-xl font-semibold">
+                {otherParticipant.name || otherParticipant.username || 'Unknown User'}
+              </h2>
+              <Badge variant={isAccepted ? 'default' : isPending ? 'secondary' : 'destructive'} className="shrink-0">
+                <div className="flex items-center gap-1">
+                  {isAccepted && <CheckCircle className="h-3 w-3" />}
+                  {isPending && <Clock className="h-3 w-3" />}
+                  {isDeclined && <XCircle className="h-3 w-3" />}
+                  <span>{isAccepted ? 'Connected' : isPending ? 'Pending' : 'Declined'}</span>
+                </div>
+              </Badge>
+            </div>
+            <p className="text-muted-foreground text-sm">
               {otherParticipant.email}
             </p>
-            <div className="flex items-center space-x-2 mt-1">
-              <Badge variant={isAccepted ? 'default' : isPending ? 'secondary' : 'destructive'}>
-                {isAccepted ? 'Connected' : isPending ? 'Pending' : 'Declined'}
-              </Badge>
-              {isAccepted && <CheckCircle className="h-4 w-4 text-green-500" />}
-              {isPending && <Clock className="h-4 w-4 text-yellow-500" />}
-              {isDeclined && <XCircle className="h-4 w-4 text-red-500" />}
-            </div>
           </div>
         </div>
       </CardHeader>
 
-      <CardContent className="flex-1 p-6 overflow-y-auto">
+      <CardContent className="flex-1 p-0 md:p-6 overflow-y-auto">
         {isAccepted ? (
           // Accepted State - Show success with check icon
           <div className="flex flex-col items-center justify-center h-full text-center">
