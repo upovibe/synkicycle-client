@@ -49,7 +49,8 @@ export function ConnectionDetails({ connection, onConnectionUpdate }: Connection
     );
   }
 
-  const isSentByMe = connection.initiator._id === user?._id;
+  const userId = user?._id || (user as any)?.id;
+  const isSentByMe = connection.initiator._id === userId;
   const isAccepted = connection.status === 'accepted';
   const isPending = connection.status === 'pending';
   const isDeclined = connection.status === 'declined';
@@ -222,9 +223,13 @@ export function ConnectionDetails({ connection, onConnectionUpdate }: Connection
                 <p className="text-sm text-muted-foreground mb-4">
                   Waiting for {otherParticipant.name || otherParticipant.username} to respond...
                 </p>
-                <Button variant="outline" disabled>
-                  <Clock className="h-4 w-4 mr-2" />
-                  Pending Response
+                <Button 
+                  variant="destructive" 
+                  onClick={handleDecline}
+                  disabled={isLoading}
+                >
+                  <XCircle className="h-4 w-4 mr-2" />
+                  Cancel Connection Request
                 </Button>
               </div>
             )}
