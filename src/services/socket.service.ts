@@ -107,6 +107,15 @@ class SocketService {
     this.on('user-stopped-typing', callback);
   }
 
+  // Online status events
+  onUserOnline(callback: (data: { userId: string }) => void) {
+    this.on('user:online', callback);
+  }
+
+  onUserOffline(callback: (data: { userId: string }) => void) {
+    this.on('user:offline', callback);
+  }
+
   // Emit events
   emitTyping(connectionId: string) {
     this.emit('typing', { connectionId });

@@ -34,6 +34,7 @@ export function ChatBox({ connection }: ChatBoxProps) {
     sendMessage, 
     setTyping,
     typingUsers,
+    onlineUsers,
   } = useChatStore();
   
   const [messageInput, setMessageInput] = useState('');
@@ -54,6 +55,9 @@ export function ChatBox({ connection }: ChatBoxProps) {
   const isOtherUserTyping = connection 
     ? Array.from(typingUsers[connection._id] || []).some(id => id !== userId)
     : false;
+
+  // Check if other user is online
+  const isOtherUserOnline = otherParticipant ? onlineUsers.has(otherParticipant._id) : false;
 
   // Join connection room and fetch messages when connection changes
   useEffect(() => {
@@ -237,9 +241,14 @@ export function ChatBox({ connection }: ChatBoxProps) {
               <h3 className="font-semibold text-base">
                 {otherParticipant.name || otherParticipant.username || 'Unknown User'}
               </h3>
-              {isOtherUserTyping && (
+              {isOtherUserTyping ? (
                 <p className="text-xs text-primary animate-pulse">typing...</p>
-              )}
+              ) : isOtherUserOnline ? (
+                <p className="text-xs text-green-600 flex items-center gap-1">
+                  <span className="w-2 h-2 bg-green-600 rounded-full"></span>
+                  online
+                </p>
+              ) : null}
             </div>
           </div>
 

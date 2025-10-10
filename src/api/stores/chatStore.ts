@@ -33,6 +33,9 @@ interface ChatState {
   // Typing indicators
   typingUsers: Record<string, Set<string>>; // connectionId -> Set of userIds
 
+  // Online status
+  onlineUsers: Set<string>; // Set of online userIds
+
   // Socket state
   isSocketInitialized: boolean;
 
@@ -69,6 +72,7 @@ export const useChatStore = create<ChatState>((set, get) => ({
   messagesLoading: false,
   messagesError: null,
   typingUsers: {},
+  onlineUsers: new Set(),
   isSocketInitialized: false,
 
   // Fetch connections
@@ -264,6 +268,8 @@ export const useChatStore = create<ChatState>((set, get) => ({
     socketService.removeAllListeners('connection:deleted');
     socketService.removeAllListeners('user-typing');
     socketService.removeAllListeners('user-stopped-typing');
+    socketService.removeAllListeners('user:online');
+    socketService.removeAllListeners('user:offline');
 
     socketService.connect(token);
     set({ isSocketInitialized: true });
@@ -404,6 +410,23 @@ export const useChatStore = create<ChatState>((set, get) => ({
             [data.connectionId]: typingSet,
           },
         };
+      });
+    });
+
+    // Online status events
+    socketService.onUserOnline((data) => {
+      set((state) => {
+        const onlineUsers = new Set(state.onlineUsers);
+        onlineUsers.add(data.userId);
+        return { onlineUsers };
+      });
+    });
+
+    socketService.onUserOffline((data) => {
+      set((state) => {
+        const onlineUsers = new Set(state.onlineUsers);
+        onlineUsers.delete(data.userId);
+        return { onlineUsers };
       });
     });
   },
