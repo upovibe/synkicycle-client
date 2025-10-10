@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { useAuthContext } from '@/providers/AuthProvider';
 import { useChatStore } from '@/api/stores/chatStore';
+import { socketService } from '@/services/socket.service';
 import type { Connection, Message } from '@/api/types/chatTypes';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
@@ -54,10 +55,19 @@ export function ChatBox({ connection }: ChatBoxProps) {
     ? Array.from(typingUsers[connection._id] || []).some(id => id !== userId)
     : false;
 
-  // Fetch messages when connection changes
+  // Join connection room and fetch messages when connection changes
   useEffect(() => {
     if (connection) {
+      // Join the connection room for real-time updates
+      socketService.emitJoinConnection(connection._id);
+      
+      // Fetch messages
       fetchMessages(connection._id);
+
+      // Cleanup: leave the room when component unmounts or connection changes
+      return () => {
+        socketService.emitLeaveConnection(connection._id);
+      };
     }
   }, [connection, fetchMessages]);
 

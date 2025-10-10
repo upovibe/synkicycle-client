@@ -185,6 +185,12 @@ export const useChatStore = create<ChatState>((set, get) => ({
       const response: SendMessageResponse = await apiClient.post(MESSAGE_ENDPOINTS.SEND_MESSAGE, payload);
       const newMessage = response.data.message;
 
+      // Broadcast message via Socket.io for real-time delivery
+      socketService.emit('send-message', {
+        connectionId: payload.connectionId,
+        message: newMessage,
+      });
+
       set((state) => ({
         messages: {
           ...state.messages,
@@ -266,17 +272,27 @@ export const useChatStore = create<ChatState>((set, get) => ({
     socketService.onNewMessage((data) => {
       const { message, connectionId } = data;
       
-      set((state) => ({
-        messages: {
-          ...state.messages,
-          [connectionId]: [...(state.messages[connectionId] || []), message],
-        },
-        connections: state.connections.map((conn) =>
-          conn._id === connectionId
-            ? { ...conn, lastMessageAt: message.createdAt }
-            : conn
-        ),
-      }));
+      set((state) => {
+        // Check if message already exists (prevent duplicates for sender)
+        const existingMessages = state.messages[connectionId] || [];
+        const messageExists = existingMessages.some(msg => msg._id === message._id);
+        
+        if (messageExists) {
+          return state;
+        }
+
+        return {
+          messages: {
+            ...state.messages,
+            [connectionId]: [...existingMessages, message],
+          },
+          connections: state.connections.map((conn) =>
+            conn._id === connectionId
+              ? { ...conn, lastMessageAt: message.createdAt }
+              : conn
+          ),
+        };
+      });
 
       // Sort connections by lastMessageAt
       set((state) => ({
