@@ -122,7 +122,22 @@ export default function NetworkHubLayout({ children }: NetworkHubLayoutProps) {
       )}
     >
       <Sidebar open={open} setOpen={setOpen}>
-        <SidebarBody className="justify-between gap-10">
+        <SidebarBody 
+          className="justify-between gap-10"
+          userProfile={
+            <div 
+              className="flex items-center gap-3 cursor-pointer"
+              onClick={() => setShowProfileViewDialog(true)}
+            >
+              <div className="h-8 w-8 shrink-0 rounded-full bg-primary flex items-center justify-center text-white text-sm font-medium">
+                {(user?.name || user?.username || 'U').charAt(0).toUpperCase()}
+              </div>
+              <span className="text-base font-medium text-neutral-700 dark:text-neutral-200">
+                {user?.username || 'User'}
+              </span>
+            </div>
+          }
+        >
           <div className="flex flex-1 flex-col overflow-x-hidden overflow-y-auto">
             {open ? <Logo /> : <LogoIcon />}
             <div className="mt-8 flex flex-col gap-2">
