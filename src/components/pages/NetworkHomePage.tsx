@@ -1,5 +1,5 @@
 import { Link } from '@tanstack/react-router'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useAuthContext } from '@/providers/AuthProvider'
 import { useStatsStore } from '@/api/stores/statsStore'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { LoaderOne } from '@/components/ui/loader'
 import { Sparkles, UserCheck, MessageSquare, TrendingUp, Users, Network } from 'lucide-react'
+import { ProfileViewDialog } from '@/components/layout/ProfileViewDialog'
 
 export function NetworkHomePage() {
   const { user } = useAuthContext()
@@ -16,6 +17,8 @@ export function NetworkHomePage() {
     networkStatsError,
     fetchNetworkStats 
   } = useStatsStore()
+  
+  const [isProfileDialogOpen, setIsProfileDialogOpen] = useState(false)
 
   useEffect(() => {
     fetchNetworkStats()
@@ -58,7 +61,10 @@ export function NetworkHomePage() {
       </div>
 
       {/* Profile Card */}
-      <Card>
+      <Card 
+        className="hover:shadow-lg transition-shadow cursor-pointer"
+        onClick={() => setIsProfileDialogOpen(true)}
+      >
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Network className="h-5 w-5" />
@@ -74,11 +80,9 @@ export function NetworkHomePage() {
               </AvatarFallback>
             </Avatar>
             <div className="flex-1">
-              <h3 className="text-xl font-semibold">{user?.name || 'Not set'}</h3>
-              <p className="text-sm text-muted-foreground">@{user?.username || 'Not set'}</p>
+              <h3 className="text-xl font-semibold">@{user?.username || 'Not set'}</h3>
               <p className="text-sm text-muted-foreground mt-1">{user?.email}</p>
             </div>
-            <Button variant="outline">Edit Profile</Button>
           </div>
         </CardContent>
       </Card>
@@ -160,6 +164,12 @@ export function NetworkHomePage() {
           </div>
         )}
       </div>
+
+      {/* Profile Dialog */}
+      <ProfileViewDialog 
+        open={isProfileDialogOpen} 
+        onOpenChange={setIsProfileDialogOpen} 
+      />
     </div>
   )
 }
