@@ -95,9 +95,9 @@ export function ChatBox({ connection }: ChatBoxProps) {
     }
   }, [connection, connectionMessages, userId]);
 
-  // Auto-resize textarea
+  // Auto-resize textarea (only on desktop)
   useEffect(() => {
-    if (textareaRef.current) {
+    if (textareaRef.current && window.innerWidth >= 768) { // 768px is md breakpoint
       textareaRef.current.style.height = 'auto';
       textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
     }
@@ -385,45 +385,55 @@ export function ChatBox({ connection }: ChatBoxProps) {
 
       {/* Input */}
       <div className="border-t px-0.5 md:px-4 py-4 shrink-0">
-        <div className="flex items-end gap-2">
-          <Button variant="ghost" size="icon" className="shrink-0">
-            <Paperclip className="h-5 w-5" />
-          </Button>
+        <div className="border rounded-lg p-3 space-y-2">
+          {/* Textarea on top */}
+          <Textarea
+            ref={textareaRef}
+            value={messageInput}
+            onChange={handleInputChange}
+            onKeyDown={handleKeyDown}
+            placeholder="Type a message..."
+            className="min-h-[80px] md:max-h-[120px] max-h-[80px] resize-none w-full border-0 focus-visible:ring-0 focus-visible:ring-offset-0 p-0 shadow-none"
+            rows={2}
+          />
 
-          <Button variant="ghost" size="icon" className="shrink-0">
-            <Smile className="h-5 w-5" />
-          </Button>
+          {/* Action buttons below */}
+          <div className="flex items-center justify-between gap-2 pt-2 border-t">
+            <div className="flex items-center gap-2">
+              <Button variant="ghost" size="icon" className="shrink-0">
+                <Paperclip className="h-5 w-5" />
+              </Button>
 
-          <div className="flex-1 relative">
-            <Textarea
-              ref={textareaRef}
-              value={messageInput}
-              onChange={handleInputChange}
-              onKeyDown={handleKeyDown}
-              placeholder="Type a message..."
-              className="min-h-[40px] max-h-[120px] resize-none pr-12"
-              rows={1}
-            />
+              <Button variant="ghost" size="icon" className="shrink-0">
+                <Smile className="h-5 w-5" />
+              </Button>
+            </div>
+
+            <Button 
+              onClick={handleSendMessage}
+              disabled={!messageInput.trim() || isSending}
+              className="shrink-0"
+            >
+              {isSending ? (
+                <>
+                  <div className="h-4 w-4 mr-2 flex items-center justify-center">
+                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-primary-foreground"></div>
+                  </div>
+                  <span className="hidden md:inline">Sending...</span>
+                </>
+              ) : (
+                <>
+                  <Send className="h-4 w-4 md:mr-2" />
+                  <span className="hidden md:inline">Send</span>
+                </>
+              )}
+            </Button>
           </div>
 
-          <Button 
-            onClick={handleSendMessage}
-            disabled={!messageInput.trim() || isSending}
-            size="icon"
-            className="shrink-0"
-          >
-            {isSending ? (
-              <div className="h-5 w-5 flex items-center justify-center">
-                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-primary-foreground"></div>
-              </div>
-            ) : (
-              <Send className="h-5 w-5" />
-            )}
-          </Button>
+          <p className="text-xs text-muted-foreground text-center hidden md:block">
+            Press Enter to send, Shift + Enter for new line
+          </p>
         </div>
-        <p className="text-xs text-muted-foreground mt-2 text-center">
-          Press Enter to send, Shift + Enter for new line
-        </p>
       </div>
     </Card>
   );
