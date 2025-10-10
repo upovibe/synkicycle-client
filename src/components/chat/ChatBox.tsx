@@ -80,6 +80,21 @@ export function ChatBox({ connection }: ChatBoxProps) {
     scrollToBottom();
   }, [connectionMessages, isOtherUserTyping]);
 
+  // Auto-mark messages as read when viewing the chat
+  useEffect(() => {
+    if (!connection || connectionMessages.length === 0) return;
+
+    // Find unread messages sent by the other user
+    const unreadMessages = connectionMessages.filter(
+      (msg) => msg.sender._id !== userId && msg.status !== 'read'
+    );
+
+    if (unreadMessages.length > 0) {
+      const messageIds = unreadMessages.map((msg) => msg._id);
+      useChatStore.getState().markMessagesAsRead(connection._id, messageIds);
+    }
+  }, [connection, connectionMessages, userId]);
+
   // Auto-resize textarea
   useEffect(() => {
     if (textareaRef.current) {
@@ -174,14 +189,14 @@ export function ChatBox({ connection }: ChatBoxProps) {
     if (message.sender._id !== userId) return null;
 
     switch (message.status) {
-      case 'sent':
-        return <Check className="h-3 w-3 text-muted-foreground" />;
-      case 'delivered':
-        return <CheckCheck className="h-3 w-3 text-muted-foreground" />;
-      case 'read':
-        return <CheckCheck className="h-3 w-3 text-primary" />;
       case 'sending':
-        return <Clock className="h-3 w-3 text-muted-foreground animate-pulse" />;
+        return <Clock className="h-3 w-3" />;
+      case 'sent':
+        return <Check className="h-3 w-3" />;
+      case 'delivered':
+        return <CheckCheck className="h-3 w-3" />;
+      case 'read':
+        return <CheckCheck className="h-3 w-3 text-blue-500" />;
       case 'failed':
         return <AlertCircle className="h-3 w-3 text-destructive" />;
       default:

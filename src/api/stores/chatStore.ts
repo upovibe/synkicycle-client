@@ -287,10 +287,16 @@ export const useChatStore = create<ChatState>((set, get) => ({
           return state;
         }
 
+        // Mark message as delivered if it's not from the current user
+        const userId = get().connections[0]?.participants?.[0]?._id; // Get current user ID from connections
+        const updatedMessage = message.sender._id !== userId 
+          ? { ...message, status: 'delivered' as const }
+          : message;
+
         return {
           messages: {
             ...state.messages,
-            [connectionId]: [...existingMessages, message],
+            [connectionId]: [...existingMessages, updatedMessage],
           },
           connections: state.connections.map((conn) =>
             conn._id === connectionId
@@ -308,12 +314,6 @@ export const useChatStore = create<ChatState>((set, get) => ({
           return bTime - aTime;
         }),
       }));
-
-      // Auto mark as read if connection is active
-      const activeConnectionId = get().activeConnection?._id;
-      if (activeConnectionId === connectionId) {
-        get().markMessagesAsRead(connectionId, [message._id]);
-      }
     });
 
     // Message read event
