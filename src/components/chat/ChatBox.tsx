@@ -274,7 +274,7 @@ export function ChatBox({ connection }: ChatBoxProps) {
       </CardHeader>
 
       {/* Messages */}
-      <CardContent className="flex-1 overflow-y-auto px-0.5 md:px-4">
+      <CardContent className="flex-1 overflow-y-auto px-0.5 md:px-4 chat-scrollbar scroll-smooth">
         {messagesLoading ? (
           <div className="flex items-center justify-center h-full">
             <LoaderOne />
