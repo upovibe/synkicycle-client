@@ -128,30 +128,28 @@ export function ConnectionDialog({
           <div className="space-y-2">
             <div className="flex items-center justify-between">
               <Label htmlFor="message">Your Message</Label>
-              {!aiGeneratedMessage && (
-                <Button 
-                  variant="outline" 
-                  size="sm"
-                  onClick={handleGenerateMessage}
-                  disabled={isGeneratingMessage}
-                >
-                  {isGeneratingMessage ? (
-                    <>
-                      <Loader2 className="h-3 w-3 mr-1 animate-spin" />
-                      Generating...
-                    </>
-                  ) : (
-                    <>
-                      <Sparkles className="h-3 w-3 mr-1" />
-                      AI Generate
-                    </>
-                  )}
-                </Button>
-              )}
+              <Button 
+                variant="outline" 
+                size="sm"
+                onClick={handleGenerateMessage}
+                disabled={isGeneratingMessage}
+              >
+                {isGeneratingMessage ? (
+                  <>
+                    <Loader2 className="h-3 w-3 mr-1 animate-spin" />
+                    Generating...
+                  </>
+                ) : (
+                  <>
+                    <Sparkles className="h-3 w-3 mr-1" />
+                    {aiGeneratedMessage ? 'Regenerate' : 'AI Generate'}
+                  </>
+                )}
+              </Button>
             </div>
             <Textarea
               id="message"
-              placeholder={isGeneratingMessage ? "Generating personalized message..." : "Customize your message or generate an AI suggestion..."}
+              placeholder={isGeneratingMessage ? "Generating personalized message..." : "Customize your message or click 'AI Generate' for a new suggestion..."}
               value={customMessage}
               onChange={(e) => setCustomMessage(e.target.value)}
               className="min-h-[100px]"
