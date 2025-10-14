@@ -227,26 +227,26 @@ export function ChatbotChatBox({ onBack }: ChatbotChatBoxProps) {
                 
                 {/* AI Suggestions - Outside message bubble */}
                 {message.senderType === 'ai' && message.messageType === 'suggestion' && message.metadata?.suggestedUsers && (
-                  <div className="mb-4 space-y-3 ml-10">
+                  <div className="mb-4 space-y-3 ml-10 max-w-full overflow-hidden">
                     <div className="flex items-center gap-2">
                       <Users className="h-4 w-4 text-blue-500" />
                       <p className="text-sm font-medium text-muted-foreground">Suggested connections:</p>
                     </div>
-                    <div className="grid gap-3">
+                    <div className="space-y-3">
                       {message.metadata.suggestedUsers.map((user: SuggestedUser, userIndex: number) => (
                         <div
                           key={userIndex}
-                          className="group relative bg-gradient-to-r from-background to-muted/30 border border-border/50 rounded-xl p-4 hover:shadow-md hover:border-primary/20 transition-all duration-200"
+                          className="group relative bg-gradient-to-r from-background to-muted/30 border border-border/50 rounded-xl p-3 hover:shadow-md hover:border-primary/20 transition-all duration-200 max-w-full"
                         >
-                          <div className="flex items-start gap-4">
-                            <Avatar className="h-12 w-12 ring-2 ring-border group-hover:ring-primary/20 transition-colors">
+                          <div className="flex items-start gap-3">
+                            <Avatar className="h-10 w-10 ring-2 ring-border group-hover:ring-primary/20 transition-colors flex-shrink-0">
                               <AvatarImage src={user.avatar} />
                               <AvatarFallback className="bg-gradient-to-br from-blue-500 to-purple-600 text-white font-semibold">
                                 {user.name?.[0] || user.username?.[0] || 'U'}
                               </AvatarFallback>
                             </Avatar>
                             
-                            <div className="flex-1 min-w-0 space-y-2">
+                            <div className="flex-1 min-w-0 space-y-1.5">
                               <div className="flex items-start justify-between gap-2">
                                 <div className="min-w-0 flex-1">
                                   <h4 className="font-semibold text-sm truncate text-foreground">
@@ -293,9 +293,9 @@ export function ChatbotChatBox({ onBack }: ChatbotChatBoxProps) {
                                 e.stopPropagation();
                                 handleConnectClick(user);
                               }}
-                              className="shrink-0 bg-primary hover:bg-primary/90 text-primary-foreground"
+                              className="shrink-0 bg-primary hover:bg-primary/90 text-primary-foreground text-xs px-2 py-1 h-7"
                             >
-                              <UserPlus className="h-4 w-4 mr-1" />
+                              <UserPlus className="h-3 w-3 mr-1" />
                               Connect
                             </Button>
                           </div>
