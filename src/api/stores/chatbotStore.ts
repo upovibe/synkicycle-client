@@ -53,7 +53,7 @@ export const useChatbotStore = create<ChatbotStore>()(
 
       // Actions
       sendMessage: async (message: string, conversationId?: string) => {
-        set({ isLoading: true, error: null });
+        set({ error: null });
         
         try {
           const requestData: SendMessageRequest = {
@@ -61,26 +61,32 @@ export const useChatbotStore = create<ChatbotStore>()(
             conversationId: conversationId || get().currentConversationId || undefined,
           };
 
+          // Add user message immediately
+          const userMessage: ChatMessage = {
+            _id: `temp_${Date.now()}`,
+            conversationId: conversationId || get().currentConversationId || 'temp',
+            senderId: 'user',
+            senderType: 'user',
+            message,
+            messageType: 'text',
+            timestamp: new Date().toISOString(),
+            isRead: true,
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString(),
+          };
+
+          // Add user message and show typing indicator
+          set((state) => ({
+            currentMessages: [...state.currentMessages, userMessage],
+            isTyping: true,
+          }));
+
           const response: SendMessageResponse = await apiClient.post(
             CHATBOT_ENDPOINTS.SEND_MESSAGE,
             requestData
           );
 
           if (response.success) {
-            // Add user message
-            const userMessage: ChatMessage = {
-              _id: `temp_${Date.now()}`,
-              conversationId: response.data.conversationId,
-              senderId: 'user',
-              senderType: 'user',
-              message,
-              messageType: 'text',
-              timestamp: new Date().toISOString(),
-              isRead: true,
-              createdAt: new Date().toISOString(),
-              updatedAt: new Date().toISOString(),
-            };
-
             // Add AI response
             const aiMessage: ChatMessage = {
               _id: `temp_${Date.now() + 1}`,
@@ -96,11 +102,11 @@ export const useChatbotStore = create<ChatbotStore>()(
               updatedAt: new Date().toISOString(),
             };
 
-            // Update state
+            // Update state with AI response and stop typing
             set((state) => ({
               currentConversationId: response.data.conversationId,
-              currentMessages: [...state.currentMessages, userMessage, aiMessage],
-              isLoading: false,
+              currentMessages: [...state.currentMessages, aiMessage],
+              isTyping: false,
             }));
 
             // Update conversations list
@@ -108,12 +114,12 @@ export const useChatbotStore = create<ChatbotStore>()(
 
             return true;
           } else {
-            set({ error: response.message || 'Failed to send message', isLoading: false });
+            set({ error: response.message || 'Failed to send message', isTyping: false });
             return false;
           }
         } catch (error: any) {
           const errorMessage = error.response?.data?.message || 'Failed to send message';
-          set({ error: errorMessage, isLoading: false });
+          set({ error: errorMessage, isTyping: false });
           return false;
         }
       },

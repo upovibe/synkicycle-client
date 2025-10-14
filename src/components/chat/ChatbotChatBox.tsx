@@ -24,7 +24,6 @@ export function ChatbotChatBox({ onBack }: ChatbotChatBoxProps) {
   } = useChatbotStore();
 
   const [inputMessage, setInputMessage] = useState('');
-  const [isSending, setIsSending] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
@@ -34,18 +33,15 @@ export function ChatbotChatBox({ onBack }: ChatbotChatBoxProps) {
   }, [currentMessages]);
 
   const handleSendMessage = async () => {
-    if (!inputMessage.trim() || isSending) return;
+    if (!inputMessage.trim() || isTyping) return;
 
     const message = inputMessage.trim();
     setInputMessage('');
-    setIsSending(true);
 
     try {
       await sendMessage(message);
     } catch (error) {
       console.error('Failed to send message:', error);
-    } finally {
-      setIsSending(false);
     }
   };
 
@@ -333,7 +329,7 @@ export function ChatbotChatBox({ onBack }: ChatbotChatBoxProps) {
             onChange={(e) => setInputMessage(e.target.value)}
             onKeyDown={handleKeyDown}
             placeholder="Ask me anything about networking..."
-            disabled={isSending || isLoading}
+            disabled={isTyping || isLoading}
             className="min-h-[80px] md:max-h-[120px] max-h-[80px] resize-none w-full border-0 focus-visible:ring-0 focus-visible:ring-offset-0 p-0 shadow-none"
             rows={2}
           />
@@ -342,22 +338,11 @@ export function ChatbotChatBox({ onBack }: ChatbotChatBoxProps) {
           <div className="flex items-center justify-end gap-2 pt-2 border-t">
             <Button 
               onClick={handleSendMessage}
-              disabled={!inputMessage.trim() || isSending || isLoading}
+              disabled={!inputMessage.trim() || isTyping || isLoading}
               className="shrink-0"
             >
-              {isSending ? (
-                <>
-                  <div className="h-4 w-4 mr-2 flex items-center justify-center">
-                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-primary-foreground"></div>
-                  </div>
-                  <span className="hidden md:inline">Sending...</span>
-                </>
-              ) : (
-                <>
-                  <Send className="h-4 w-4 md:mr-2" />
-                  <span className="hidden md:inline">Send</span>
-                </>
-              )}
+              <Send className="h-4 w-4 md:mr-2" />
+              <span className="hidden md:inline">Send</span>
             </Button>
           </div>
 
