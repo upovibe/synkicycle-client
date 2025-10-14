@@ -16,16 +16,25 @@ interface ChatbotChatBoxProps {
 export function ChatbotChatBox({ onBack }: ChatbotChatBoxProps) {
   const {
     currentMessages,
+    currentConversationId,
     isLoading,
     isTyping,
     error,
     sendMessage,
     clearError,
+    getConversationHistory,
   } = useChatbotStore();
 
   const [inputMessage, setInputMessage] = useState('');
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  // Load conversation history when component mounts or conversation changes
+  useEffect(() => {
+    if (currentConversationId && currentMessages.length === 0) {
+      getConversationHistory(currentConversationId);
+    }
+  }, [currentConversationId, getConversationHistory, currentMessages.length]);
 
   // Auto-scroll to bottom when new messages arrive
   useEffect(() => {

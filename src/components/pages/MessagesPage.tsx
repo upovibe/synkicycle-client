@@ -11,14 +11,16 @@ import { ArrowLeft } from 'lucide-react';
 
 export default function MessagesPage() {
   const { connections, fetchConnections, connectionsLoading } = useChatStore();
-  const { createConversation, setCurrentConversation } = useChatbotStore();
+  const { createConversation, setCurrentConversation, getUserConversations } = useChatbotStore();
   const [selectedConnection, setSelectedConnection] = useState<Connection | null>(null);
   const [showChatbot, setShowChatbot] = useState(false);
 
   useEffect(() => {
     // Fetch only accepted connections for chat
     fetchConnections({ status: 'accepted' });
-  }, [fetchConnections]);
+    // Load chatbot conversations
+    getUserConversations();
+  }, [fetchConnections, getUserConversations]);
 
   // Update selected connection when connections change (for real-time updates)
   useEffect(() => {
@@ -42,22 +44,39 @@ export default function MessagesPage() {
   const handleSelectConnection = (connection: Connection) => {
     setSelectedConnection(connection);
     setShowChatbot(false);
+    // Clear chatbot conversation when selecting regular connection
+    setCurrentConversation(null);
   };
 
   const handleSelectChatbot = async () => {
     setSelectedConnection(null);
     setShowChatbot(true);
     
-    // Create or get chatbot conversation
-    const conversationId = await createConversation('AI Assistant');
-    if (conversationId) {
-      setCurrentConversation(conversationId);
+    // Get existing conversations first
+    const { conversations } = useChatbotStore.getState();
+    
+    // Check if there's an existing AI Assistant conversation
+    const existingConversation = conversations.find(conv => 
+      conv.title === 'AI Assistant' && conv.isActive
+    );
+    
+    if (existingConversation) {
+      // Load existing conversation
+      setCurrentConversation(existingConversation.conversationId);
+    } else {
+      // Create new conversation
+      const conversationId = await createConversation('AI Assistant');
+      if (conversationId) {
+        setCurrentConversation(conversationId);
+      }
     }
   };
 
   const handleBackToList = () => {
     setSelectedConnection(null);
     setShowChatbot(false);
+    // Clear current conversation when going back to list
+    setCurrentConversation(null);
   };
 
   if (connectionsLoading) {

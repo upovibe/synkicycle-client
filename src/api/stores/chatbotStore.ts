@@ -269,7 +269,14 @@ export const useChatbotStore = create<ChatbotStore>()(
       setCurrentConversation: (conversationId: string | null) => {
         set({ currentConversationId: conversationId });
         if (conversationId) {
-          get().getConversationHistory(conversationId);
+          // Check if we already have messages for this conversation
+          const currentState = get();
+          const hasMessages = currentState.currentMessages.length > 0 && 
+            currentState.currentMessages[0]?.conversationId === conversationId;
+          
+          if (!hasMessages) {
+            get().getConversationHistory(conversationId);
+          }
         } else {
           set({ currentMessages: [] });
         }
@@ -330,6 +337,7 @@ export const useChatbotStore = create<ChatbotStore>()(
       partialize: (state) => ({
         conversations: state.conversations,
         currentConversationId: state.currentConversationId,
+        currentMessages: state.currentMessages,
       }),
     }
   )
