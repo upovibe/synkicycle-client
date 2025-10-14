@@ -155,7 +155,7 @@ export function ChatbotChatBox({ onBack }: ChatbotChatBoxProps) {
   };
 
   return (
-    <Card className="flex flex-col h-full border-0 rounded-none md:border md:rounded-lg shadow-none md:shadow-sm pb-0 px-0.5 md:py-0">
+    <Card className="flex flex-col h-full border-0 rounded-none md:border md:rounded-lg shadow-none md:shadow-sm pb-0 px-0.5 py-0 md:py-0">
       {/* Header */}
       <CardHeader className="border-b p-0 md:p-4 !pb-4 shrink-0">
         <div className="flex items-center gap-3">

@@ -17,15 +17,17 @@ import {
   CheckCheck,
   Clock,
   AlertCircle,
+  ArrowLeft,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { format, isToday, isYesterday } from 'date-fns';
 
 interface ChatBoxProps {
   connection: Connection | null;
+  onBack?: () => void;
 }
 
-export function ChatBox({ connection }: ChatBoxProps) {
+export function ChatBox({ connection, onBack }: ChatBoxProps) {
   const { user } = useAuthContext();
   const { 
     messages, 
@@ -241,11 +243,22 @@ export function ChatBox({ connection }: ChatBoxProps) {
   }
 
   return (
-    <Card className="flex flex-col h-full border-0 rounded-none md:border md:rounded-lg shadow-none md:shadow-sm pb-0 px-0.5 md:py-0">
+    <Card className="flex flex-col h-full border-0 rounded-none md:border md:rounded-lg shadow-none md:shadow-sm pb-0 px-0.5 md:py-0 py-0">
       {/* Header */}
       <CardHeader className="border-b p-0 md:p-4 !pb-4 shrink-0">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
+            {onBack && (
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={onBack}
+                className="md:hidden"
+              >
+                <ArrowLeft className="h-4 w-4" />
+              </Button>
+            )}
+            
             <Avatar className="h-10 w-10 ring-2 ring-border">
               <AvatarImage src={otherParticipant.avatar} />
               <AvatarFallback>

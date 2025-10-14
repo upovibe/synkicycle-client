@@ -6,8 +6,6 @@ import { ChatList } from '@/components/chat/ChatList';
 import { ChatBox } from '@/components/chat/ChatBox';
 import { ChatbotChatBox } from '@/components/chat/ChatbotChatBox';
 import { LoaderOne } from '@/components/ui/loader';
-import { Button } from '@/components/ui/button';
-import { ArrowLeft } from 'lucide-react';
 
 export default function MessagesPage() {
   const { connections, fetchConnections, connectionsLoading } = useChatStore();
@@ -101,24 +99,12 @@ export default function MessagesPage() {
           />
         ) : (
           // Show chat box on mobile when connection or chatbot selected
-          <div className="flex flex-col h-full">
-            {/* Back button for mobile */}
-            <div className="border-b bg-background">
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={handleBackToList}
-              >
-                <ArrowLeft className="h-5 w-5" />
-              </Button>
-            </div>
-            <div className="flex-1 overflow-hidden">
-              {showChatbot ? (
-                <ChatbotChatBox onBack={handleBackToList} />
-              ) : (
-                <ChatBox connection={selectedConnection} />
-              )}
-            </div>
+          <div className="flex-1 overflow-hidden">
+            {showChatbot ? (
+              <ChatbotChatBox onBack={handleBackToList} />
+            ) : (
+              <ChatBox connection={selectedConnection} onBack={handleBackToList} />
+            )}
           </div>
         )}
       </div>
@@ -138,9 +124,9 @@ export default function MessagesPage() {
         {/* Right Section - Chat Box */}
         <div className="flex-1">
           {showChatbot ? (
-            <ChatbotChatBox />
+            <ChatbotChatBox onBack={handleBackToList} />
           ) : (
-            <ChatBox connection={selectedConnection} />
+            <ChatBox connection={selectedConnection} onBack={handleBackToList} />
           )}
         </div>
       </div>
