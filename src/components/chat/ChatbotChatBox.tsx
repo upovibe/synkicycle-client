@@ -6,6 +6,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Textarea } from '@/components/ui/textarea';
 import { Bot, Send, Users, Lightbulb, Sparkles, ArrowLeft, UserPlus } from 'lucide-react';
+import { LoaderOne } from '@/components/ui/loader';
 import { cn } from '@/lib/utils';
 import type { ChatMessage, SuggestedUser } from '@/api/types/chatbotTypes';
 import type { MatchUser } from '@/api/types/matchTypes';
@@ -27,6 +28,8 @@ export function ChatbotChatBox({ onBack }: ChatbotChatBoxProps) {
     getConversationHistory,
   } = useChatbotStore();
 
+  const [isLoadingHistory, setIsLoadingHistory] = useState(false);
+
   const [inputMessage, setInputMessage] = useState('');
   const [showConnectionDialog, setShowConnectionDialog] = useState(false);
   const [selectedUser, setSelectedUser] = useState<MatchUser | null>(null);
@@ -37,7 +40,10 @@ export function ChatbotChatBox({ onBack }: ChatbotChatBoxProps) {
   // Load conversation history when component mounts or conversation changes
   useEffect(() => {
     if (currentConversationId && currentMessages.length === 0) {
-      getConversationHistory(currentConversationId);
+      setIsLoadingHistory(true);
+      getConversationHistory(currentConversationId).finally(() => {
+        setIsLoadingHistory(false);
+      });
     }
   }, [currentConversationId, getConversationHistory, currentMessages.length]);
 
@@ -191,7 +197,11 @@ export function ChatbotChatBox({ onBack }: ChatbotChatBoxProps) {
 
       {/* Messages */}
       <CardContent className="flex-1 overflow-y-auto px-0.5 md:px-4 chat-scrollbar scroll-smooth min-h-0">
-        {currentMessages.length === 0 ? (
+        {isLoadingHistory ? (
+          <div className="flex items-center justify-center h-full">
+            <LoaderOne />
+          </div>
+        ) : currentMessages.length === 0 ? (
           <div className="flex flex-col items-center justify-center h-full text-muted-foreground p-6">
             <div className="text-center space-y-4">
               <div className="h-16 w-16 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center mx-auto">
