@@ -4,6 +4,7 @@ import { useChatbotStore } from '@/api/stores/chatbotStore';
 import type { Connection } from '@/api/types/chatTypes';
 import { ChatList } from '@/components/chat/ChatList';
 import { ChatBox } from '@/components/chat/ChatBox';
+import { ChatbotChatBox } from '@/components/chat/ChatbotChatBox';
 import { LoaderOne } from '@/components/ui/loader';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft } from 'lucide-react';
@@ -94,13 +95,7 @@ export default function MessagesPage() {
             </div>
             <div className="flex-1 overflow-hidden">
               {showChatbot ? (
-                <div className="h-full flex items-center justify-center text-muted-foreground">
-                  <div className="text-center">
-                    <div className="text-4xl mb-4">🤖</div>
-                    <h3 className="text-lg font-semibold mb-2">AI Assistant</h3>
-                    <p className="text-sm">Chatbot interface coming soon...</p>
-                  </div>
-                </div>
+                <ChatbotChatBox onBack={handleBackToList} />
               ) : (
                 <ChatBox connection={selectedConnection} />
               )}
@@ -124,16 +119,7 @@ export default function MessagesPage() {
         {/* Right Section - Chat Box */}
         <div className="flex-1">
           {showChatbot ? (
-            <div className="h-full flex items-center justify-center text-muted-foreground">
-              <div className="text-center">
-                <div className="text-6xl mb-6">🤖</div>
-                <h3 className="text-2xl font-semibold mb-4">AI Assistant</h3>
-                <p className="text-lg">Chatbot interface coming soon...</p>
-                <p className="text-sm mt-2 text-muted-foreground">
-                  Get networking tips and find connections
-                </p>
-              </div>
-            </div>
+            <ChatbotChatBox />
           ) : (
             <ChatBox connection={selectedConnection} />
           )}
