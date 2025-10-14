@@ -5,9 +5,11 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Textarea } from '@/components/ui/textarea';
-import { Bot, Send, Users, Lightbulb, Sparkles, ArrowLeft } from 'lucide-react';
+import { Bot, Send, Users, Lightbulb, Sparkles, ArrowLeft, UserPlus } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import type { ChatMessage, SuggestedUser } from '@/api/types/chatbotTypes';
+import type { MatchUser } from '@/api/types/matchTypes';
+import { ConnectionDialog } from '@/components/layout/ConnectionDialog';
 
 interface ChatbotChatBoxProps {
   onBack?: () => void;
@@ -26,6 +28,9 @@ export function ChatbotChatBox({ onBack }: ChatbotChatBoxProps) {
   } = useChatbotStore();
 
   const [inputMessage, setInputMessage] = useState('');
+  const [showConnectionDialog, setShowConnectionDialog] = useState(false);
+  const [selectedUser, setSelectedUser] = useState<MatchUser | null>(null);
+  const [selectedConnectionType, setSelectedConnectionType] = useState<'professional' | 'social' | 'both'>('both');
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
@@ -69,9 +74,27 @@ export function ChatbotChatBox({ onBack }: ChatbotChatBoxProps) {
     }
   }, [inputMessage]);
 
-  const handleSuggestionClick = (suggestion: SuggestedUser) => {
-    // Handle suggestion click - could open profile, send message, etc.
-    console.log('Suggestion clicked:', suggestion);
+  // Convert SuggestedUser to MatchUser format
+  const convertToMatchUser = (suggestion: SuggestedUser): MatchUser => {
+    return {
+      id: suggestion.userId,
+      uuid: suggestion.userId, // Use userId as uuid for now
+      username: suggestion.username,
+      name: suggestion.name,
+      profession: suggestion.profession,
+      bio: suggestion.bio,
+      avatar: suggestion.avatar,
+      verified: false, // Default to false since we don't have this info
+      createdAt: new Date().toISOString(), // Default to current time
+      interests: [], // Default empty array since we don't have this info
+    };
+  };
+
+  const handleConnectClick = (suggestion: SuggestedUser) => {
+    const matchUser = convertToMatchUser(suggestion);
+    setSelectedUser(matchUser);
+    setSelectedConnectionType(suggestion.connectionType || 'both');
+    setShowConnectionDialog(true);
   };
 
   const renderMessage = (message: ChatMessage) => {
@@ -204,42 +227,78 @@ export function ChatbotChatBox({ onBack }: ChatbotChatBoxProps) {
                 
                 {/* AI Suggestions - Outside message bubble */}
                 {message.senderType === 'ai' && message.messageType === 'suggestion' && message.metadata?.suggestedUsers && (
-                  <div className="mb-4 space-y-2">
-                    <p className="text-sm font-medium text-muted-foreground ml-10">Suggested connections:</p>
-                    <div className="space-y-2">
+                  <div className="mb-4 space-y-3 ml-10">
+                    <div className="flex items-center gap-2">
+                      <Users className="h-4 w-4 text-blue-500" />
+                      <p className="text-sm font-medium text-muted-foreground">Suggested connections:</p>
+                    </div>
+                    <div className="grid gap-3">
                       {message.metadata.suggestedUsers.map((user: SuggestedUser, userIndex: number) => (
                         <div
                           key={userIndex}
-                          onClick={() => handleSuggestionClick(user)}
-                          className="flex items-center gap-3 p-3 bg-background border rounded-lg cursor-pointer hover:bg-muted/50 transition-colors"
+                          className="group relative bg-gradient-to-r from-background to-muted/30 border border-border/50 rounded-xl p-4 hover:shadow-md hover:border-primary/20 transition-all duration-200"
                         >
-                          <Avatar className="h-10 w-10">
-                            <AvatarImage src={user.avatar} />
-                            <AvatarFallback>
-                              {user.name?.[0] || user.username?.[0] || 'U'}
-                            </AvatarFallback>
-                          </Avatar>
-                          <div className="flex-1 min-w-0">
-                            <div className="flex items-center gap-2">
-                              <h4 className="font-medium text-sm truncate">
-                                {user.name || user.username}
-                              </h4>
-                              {user.matchScore && (
-                                <Badge variant="secondary" className="text-xs">
-                                  {user.matchScore}% match
-                                </Badge>
+                          <div className="flex items-start gap-4">
+                            <Avatar className="h-12 w-12 ring-2 ring-border group-hover:ring-primary/20 transition-colors">
+                              <AvatarImage src={user.avatar} />
+                              <AvatarFallback className="bg-gradient-to-br from-blue-500 to-purple-600 text-white font-semibold">
+                                {user.name?.[0] || user.username?.[0] || 'U'}
+                              </AvatarFallback>
+                            </Avatar>
+                            
+                            <div className="flex-1 min-w-0 space-y-2">
+                              <div className="flex items-start justify-between gap-2">
+                                <div className="min-w-0 flex-1">
+                                  <h4 className="font-semibold text-sm truncate text-foreground">
+                                    {user.name || user.username}
+                                  </h4>
+                                  {user.username && user.name && (
+                                    <p className="text-xs text-muted-foreground truncate">
+                                      @{user.username}
+                                    </p>
+                                  )}
+                                </div>
+                                {user.matchScore && (
+                                  <Badge variant="secondary" className="text-xs font-medium shrink-0">
+                                    {user.matchScore}% match
+                                  </Badge>
+                                )}
+                              </div>
+                              
+                              {user.profession && (
+                                <p className="text-sm text-muted-foreground truncate">
+                                  {user.profession}
+                                </p>
+                              )}
+                              
+                              {user.bio && (
+                                <p className="text-xs text-muted-foreground line-clamp-2">
+                                  {user.bio}
+                                </p>
+                              )}
+                              
+                              {(user.reason || user.matchReason) && (
+                                <div className="flex items-center gap-1">
+                                  <Sparkles className="h-3 w-3 text-yellow-500" />
+                                  <p className="text-xs text-muted-foreground">
+                                    {user.reason || user.matchReason}
+                                  </p>
+                                </div>
                               )}
                             </div>
-                            <p className="text-xs text-muted-foreground truncate">
-                              {user.profession}
-                            </p>
-                            <p className="text-xs text-muted-foreground mt-1">
-                              {user.reason || user.matchReason}
-                            </p>
+                            
+                            <Button 
+                              size="sm" 
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleConnectClick(user);
+                              }}
+                              className="shrink-0 bg-primary hover:bg-primary/90 text-primary-foreground"
+                            >
+                              <UserPlus className="h-4 w-4 mr-1" />
+                              Connect
+                            </Button>
                           </div>
-                          <Button size="sm" variant="outline" className="shrink-0">
-                            View Profile
-                          </Button>
                         </div>
                       ))}
                     </div>
@@ -360,6 +419,16 @@ export function ChatbotChatBox({ onBack }: ChatbotChatBoxProps) {
           </p>
         </div>
       </div>
+
+      {/* Connection Dialog */}
+      {selectedUser && (
+        <ConnectionDialog
+          open={showConnectionDialog}
+          onOpenChange={setShowConnectionDialog}
+          targetUser={selectedUser}
+          connectionType={selectedConnectionType}
+        />
+      )}
     </Card>
   );
 }
