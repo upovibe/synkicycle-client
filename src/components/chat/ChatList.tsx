@@ -3,23 +3,29 @@ import { useAuthContext } from '@/providers/AuthProvider';
 import type { Connection } from '@/api/types/chatTypes';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { MessageSquare, Search } from 'lucide-react';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { MessageSquare, Search, Bot, Sparkles, Users, Lightbulb } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { useChatbotStore } from '@/api/stores/chatbotStore';
 
 interface ChatListProps {
   connections: Connection[];
   selectedConnection: Connection | null;
   onSelectConnection: (connection: Connection) => void;
+  onSelectChatbot?: () => void;
 }
 
 export function ChatList({
   connections,
   selectedConnection,
   onSelectConnection,
+  onSelectChatbot,
 }: ChatListProps) {
   const { user } = useAuthContext();
   const [searchQuery, setSearchQuery] = useState('');
+  const { createConversation } = useChatbotStore();
   
   const userId = user?._id || (user as any)?.id;
 
@@ -67,16 +73,96 @@ export function ChatList({
       <CardHeader className="border-b p-0 md:p-5">
         <CardTitle className="text-xl">Messages</CardTitle>
         
-        {/* Search */}
-        <div className="mt-3 relative">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-          <input
-            type="text"
-            placeholder="Search conversations..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-9 pr-3 py-2 text-sm border border-border rounded-md bg-background focus:outline-none focus:ring-2 focus:ring-primary/20"
-          />
+        {/* Search and AI Chatbot */}
+        <div className="mt-3 flex gap-2">
+          {/* Search */}
+          <div className="flex-1 relative">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <input
+              type="text"
+              placeholder="Search conversations..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full pl-9 pr-3 py-2 text-sm border border-border rounded-md bg-background focus:outline-none focus:ring-2 focus:ring-primary/20"
+            />
+          </div>
+
+          {/* AI Chatbot Button with Tooltip */}
+          <Popover>
+            <PopoverTrigger asChild>
+              <Button
+                onClick={async () => {
+                  if (onSelectChatbot) {
+                    onSelectChatbot();
+                  } else {
+                    // Create new chatbot conversation
+                    const conversationId = await createConversation('AI Assistant');
+                    if (conversationId) {
+                      // Handle chatbot conversation opening
+                      console.log('Chatbot conversation created:', conversationId);
+                    }
+                  }
+                }}
+                variant="outline"
+                size="icon"
+                className="h-10 w-10 p-0 hover:bg-primary/5 hover:border-primary/20 transition-colors"
+              >
+                <div className="flex items-center justify-center h-6 w-6 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 text-white">
+                  <Bot className="h-3 w-3" />
+                </div>
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-80 p-4" side="bottom" align="end">
+              <div className="space-y-3">
+                {/* Header */}
+                <div className="flex items-center gap-3">
+                  <div className="flex items-center justify-center h-10 w-10 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 text-white">
+                    <Bot className="h-5 w-5" />
+                  </div>
+                  <div>
+                    <h3 className="font-semibold text-lg">AI Assistant</h3>
+                    <div className="flex items-center gap-2">
+                      <Badge variant="secondary" className="text-xs">
+                        Beta
+                      </Badge>
+                      <span className="text-xs text-muted-foreground">Powered by AI</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Description */}
+                <p className="text-sm text-muted-foreground">
+                  Your intelligent networking companion that helps you find connections, improve your profile, and get personalized advice.
+                </p>
+
+                {/* Features */}
+                <div className="space-y-2">
+                  <h4 className="font-medium text-sm">What I can help with:</h4>
+                  <div className="space-y-1.5">
+                    <div className="flex items-center gap-2 text-sm">
+                      <Users className="h-4 w-4 text-blue-500" />
+                      <span>Find relevant connections</span>
+                    </div>
+                    <div className="flex items-center gap-2 text-sm">
+                      <Lightbulb className="h-4 w-4 text-yellow-500" />
+                      <span>Profile improvement tips</span>
+                    </div>
+                    <div className="flex items-center gap-2 text-sm">
+                      <Sparkles className="h-4 w-4 text-purple-500" />
+                      <span>Networking strategies</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Call to action */}
+                <div className="pt-2 border-t">
+                  <p className="text-xs text-muted-foreground">
+                    Click to start a conversation and get personalized networking help!
+                  </p>
+                </div>
+              </div>
+            </PopoverContent>
+          </Popover>
         </div>
       </CardHeader>
 

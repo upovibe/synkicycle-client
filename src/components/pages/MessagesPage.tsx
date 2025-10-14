@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useChatStore } from '@/api/stores/chatStore';
+import { useChatbotStore } from '@/api/stores/chatbotStore';
 import type { Connection } from '@/api/types/chatTypes';
 import { ChatList } from '@/components/chat/ChatList';
 import { ChatBox } from '@/components/chat/ChatBox';
@@ -9,7 +10,9 @@ import { ArrowLeft } from 'lucide-react';
 
 export default function MessagesPage() {
   const { connections, fetchConnections, connectionsLoading } = useChatStore();
+  const { createConversation, setCurrentConversation } = useChatbotStore();
   const [selectedConnection, setSelectedConnection] = useState<Connection | null>(null);
+  const [showChatbot, setShowChatbot] = useState(false);
 
   useEffect(() => {
     // Fetch only accepted connections for chat
@@ -37,10 +40,23 @@ export default function MessagesPage() {
 
   const handleSelectConnection = (connection: Connection) => {
     setSelectedConnection(connection);
+    setShowChatbot(false);
+  };
+
+  const handleSelectChatbot = async () => {
+    setSelectedConnection(null);
+    setShowChatbot(true);
+    
+    // Create or get chatbot conversation
+    const conversationId = await createConversation('AI Assistant');
+    if (conversationId) {
+      setCurrentConversation(conversationId);
+    }
   };
 
   const handleBackToList = () => {
     setSelectedConnection(null);
+    setShowChatbot(false);
   };
 
   if (connectionsLoading) {
@@ -55,15 +71,16 @@ export default function MessagesPage() {
     <div className="flex gap-4 h-full">
       {/* Mobile Layout - Toggle between list and chat */}
       <div className="md:hidden w-full h-full">
-        {!selectedConnection ? (
+        {!selectedConnection && !showChatbot ? (
           // Show chat list on mobile when no connection selected
           <ChatList
             connections={acceptedConnections}
             selectedConnection={selectedConnection}
             onSelectConnection={handleSelectConnection}
+            onSelectChatbot={handleSelectChatbot}
           />
         ) : (
-          // Show chat box on mobile when connection selected
+          // Show chat box on mobile when connection or chatbot selected
           <div className="flex flex-col h-full">
             {/* Back button for mobile */}
             <div className="border-b bg-background">
@@ -76,7 +93,17 @@ export default function MessagesPage() {
               </Button>
             </div>
             <div className="flex-1 overflow-hidden">
-              <ChatBox connection={selectedConnection} />
+              {showChatbot ? (
+                <div className="h-full flex items-center justify-center text-muted-foreground">
+                  <div className="text-center">
+                    <div className="text-4xl mb-4">🤖</div>
+                    <h3 className="text-lg font-semibold mb-2">AI Assistant</h3>
+                    <p className="text-sm">Chatbot interface coming soon...</p>
+                  </div>
+                </div>
+              ) : (
+                <ChatBox connection={selectedConnection} />
+              )}
             </div>
           </div>
         )}
@@ -90,12 +117,26 @@ export default function MessagesPage() {
             connections={acceptedConnections}
             selectedConnection={selectedConnection}
             onSelectConnection={handleSelectConnection}
+            onSelectChatbot={handleSelectChatbot}
           />
         </div>
 
         {/* Right Section - Chat Box */}
         <div className="flex-1">
-          <ChatBox connection={selectedConnection} />
+          {showChatbot ? (
+            <div className="h-full flex items-center justify-center text-muted-foreground">
+              <div className="text-center">
+                <div className="text-6xl mb-6">🤖</div>
+                <h3 className="text-2xl font-semibold mb-4">AI Assistant</h3>
+                <p className="text-lg">Chatbot interface coming soon...</p>
+                <p className="text-sm mt-2 text-muted-foreground">
+                  Get networking tips and find connections
+                </p>
+              </div>
+            </div>
+          ) : (
+            <ChatBox connection={selectedConnection} />
+          )}
         </div>
       </div>
     </div>
