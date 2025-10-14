@@ -99,7 +99,7 @@ export default function MessagesPage() {
           />
         ) : (
           // Show chat box on mobile when connection or chatbot selected
-          <div className="flex-1 overflow-hidden">
+          <div className="w-full h-full flex flex-col">
             {showChatbot ? (
               <ChatbotChatBox onBack={handleBackToList} />
             ) : (
@@ -122,7 +122,7 @@ export default function MessagesPage() {
         </div>
 
         {/* Right Section - Chat Box */}
-        <div className="flex-1">
+        <div className="flex-1 flex flex-col min-h-0">
           {showChatbot ? (
             <ChatbotChatBox onBack={handleBackToList} />
           ) : (

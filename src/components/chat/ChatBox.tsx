@@ -287,7 +287,7 @@ export function ChatBox({ connection, onBack }: ChatBoxProps) {
       </CardHeader>
 
       {/* Messages */}
-      <CardContent className="flex-1 overflow-y-auto px-0.5 md:px-4 chat-scrollbar scroll-smooth">
+      <CardContent className="flex-1 overflow-y-auto px-0.5 md:px-4 chat-scrollbar scroll-smooth min-h-0">
         {messagesLoading ? (
           <div className="flex items-center justify-center h-full">
             <LoaderOne />
@@ -396,8 +396,8 @@ export function ChatBox({ connection, onBack }: ChatBoxProps) {
         )}
       </CardContent>
 
-      {/* Input */}
-      <div className="border-t px-0.5 md:px-4 py-4 shrink-0">
+      {/* Input - Sticky Footer */}
+      <div className="border-t px-0.5 md:px-4 py-4 pb-0 md:pb-4 shrink-0 bg-background">
         <div className="border rounded-lg p-3 space-y-2">
           {/* Textarea on top */}
           <Textarea
