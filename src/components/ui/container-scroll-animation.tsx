@@ -60,9 +60,9 @@ export const Card = ({
       }}
       className="max-w-xs sm:max-w-md md:max-w-2xl lg:max-w-5xl -mt-4 sm:-mt-6 md:-mt-8 lg:-mt-12 mx-auto h-[20rem] sm:h-[25rem] md:h-[30rem] lg:h-[40rem] w-full border-2 sm:border-3 md:border-4 border-[#6C6C6C] p-1 sm:p-2 md:p-4 lg:p-6 bg-[#222222] rounded-[15px] sm:rounded-[20px] md:rounded-[25px] lg:rounded-[30px] shadow-2xl relative z-0"
     >
-      <div className="h-full w-full overflow-hidden rounded-lg sm:rounded-xl md:rounded-2xl bg-gray-100 dark:bg-zinc-900 p-1 sm:p-2 md:p-4">
+      <div className="h-full w-full overflow-hidden rounded-lg sm:rounded-xl md:rounded-2xl bg-gray-100 dark:bg-zinc-900">
         <img
-          src={`/linear.webp`}
+          src={`/Screenshot_2.jpeg`}
           alt="hero"
           height={720}
           width={1400}
