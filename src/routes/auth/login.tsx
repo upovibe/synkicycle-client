@@ -5,6 +5,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { cn } from '@/lib/utils'
 import toast from 'react-hot-toast'
+import { BackgroundGradientAnimation } from '@/components/ui/background-gradient-animation'
 
 export const Route = createFileRoute('/auth/login')({
   component: LoginPage,
@@ -37,8 +38,10 @@ function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="shadow-input mx-auto w-full max-w-md rounded-none bg-white p-4 md:rounded-2xl md:p-8 dark:bg-black">
+    <div className="min-h-screen flex overflow-hidden">
+      {/* Left side - Form (mobile: centered, md: 1/2, lg+: 1/3) */}
+      <div className="w-full md:w-1/2 lg:w-1/3 flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+        <div className="shadow-input mx-auto w-full max-w-md rounded-none bg-white p-4 md:rounded-2xl md:p-8 dark:bg-black">
         <h2 className="text-xl font-bold text-neutral-800 dark:text-neutral-200">
           Welcome to Synkicycle
         </h2>
@@ -101,6 +104,31 @@ function LoginPage() {
             </Link>
           </div>
         </form>
+        </div>
+      </div>
+      
+      {/* Right side - Background (hidden on mobile, md: 1/2, lg+: 2/3) */}
+      <div className="hidden md:block md:w-1/2 lg:w-2/3 overflow-hidden">
+        <BackgroundGradientAnimation
+          gradientBackgroundStart="rgb(59, 7, 100)"
+          gradientBackgroundEnd="rgb(125, 29, 163)"
+          firstColor="59, 7, 100"
+          secondColor="125, 29, 163"
+          thirdColor="255, 119, 48"
+          fourthColor="255, 255, 255"
+          fifthColor="0, 255, 255"
+          pointerColor="140, 100, 255"
+          size="80%"
+          blendingValue="hard-light"
+          interactive={true}
+          containerClassName="h-full w-full"
+        >
+          <div className="absolute z-50 inset-0 flex items-center justify-center text-white font-bold px-4 pointer-events-none text-3xl text-center md:text-4xl lg:text-7xl">
+            <p className="bg-clip-text text-transparent drop-shadow-2xl bg-gradient-to-b from-white/80 to-white/20">
+              Welcome Back!
+            </p>
+          </div>
+        </BackgroundGradientAnimation>
       </div>
     </div>
   )
