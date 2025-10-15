@@ -32,12 +32,29 @@ export default function NetworkHubLayout({ children }: NetworkHubLayoutProps) {
   const { initializeSocket } = useChatStore();
   const { accessToken } = useAuthStore();
 
+  // Check if profile is incomplete
+  const isProfileIncomplete = user && (!user.name || !user.username);
+
   // Redirect to login if not authenticated
   useEffect(() => {
     if (!loading && !isAuthenticated) {
       navigate({ to: '/auth/login', replace: true });
     }
   }, [isAuthenticated, loading, navigate]);
+
+  // Initialize Socket.io connection
+  useEffect(() => {
+    if (accessToken) {
+      initializeSocket(accessToken);
+    }
+  }, [accessToken, initializeSocket]);
+
+  // Show profile dialog when user is logged in but profile is incomplete
+  useEffect(() => {
+    if (isProfileIncomplete) {
+      setShowProfileDialog(true);
+    }
+  }, [isProfileIncomplete]);
 
   // Show loading while checking authentication
   if (loading) {
@@ -52,23 +69,6 @@ export default function NetworkHubLayout({ children }: NetworkHubLayoutProps) {
   if (!isAuthenticated) {
     return null;
   }
-
-  // Initialize Socket.io connection
-  useEffect(() => {
-    if (accessToken) {
-      initializeSocket(accessToken);
-    }
-  }, [accessToken, initializeSocket]);
-
-  // Check if profile is incomplete
-  const isProfileIncomplete = user && (!user.name || !user.username);
-
-  // Show profile dialog when user is logged in but profile is incomplete
-  useEffect(() => {
-    if (isProfileIncomplete) {
-      setShowProfileDialog(true);
-    }
-  }, [isProfileIncomplete]);
 
   const handleLogout = async () => {
     console.log('Logout clicked');

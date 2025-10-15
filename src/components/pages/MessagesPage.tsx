@@ -9,7 +9,7 @@ import { LoaderOne } from '@/components/ui/loader';
 
 export default function MessagesPage() {
   const { connections, fetchConnections, connectionsLoading } = useChatStore();
-  const { createConversation, setCurrentConversation, getUserConversations } = useChatbotStore();
+  const { createConversation, setCurrentConversation, getUserConversations, conversations } = useChatbotStore();
   const [selectedConnection, setSelectedConnection] = useState<Connection | null>(null);
   const [showChatbot, setShowChatbot] = useState(false);
 
@@ -49,9 +49,6 @@ export default function MessagesPage() {
   const handleSelectChatbot = async () => {
     setSelectedConnection(null);
     setShowChatbot(true);
-    
-    // Get existing conversations first
-    const { conversations } = useChatbotStore.getState();
     
     // Check if there's an existing AI Assistant conversation
     const existingConversation = conversations.find(conv => 

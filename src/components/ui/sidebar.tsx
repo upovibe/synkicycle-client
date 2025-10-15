@@ -72,10 +72,11 @@ export const Sidebar = ({
 };
 
 export const SidebarBody = (props: React.ComponentProps<typeof motion.div> & { userProfile?: React.ReactNode }) => {
+  const { userProfile, ...restProps } = props;
   return (
     <>
-      <DesktopSidebar {...props} />
-      <MobileSidebar {...(props as React.ComponentProps<"div">)} userProfile={props.userProfile} />
+      <DesktopSidebar {...restProps} />
+      <MobileSidebar {...(restProps as React.ComponentProps<"div">)} userProfile={userProfile} />
     </>
   );
 };
