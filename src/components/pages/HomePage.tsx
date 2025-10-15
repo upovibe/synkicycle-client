@@ -25,7 +25,7 @@ export function HomePage() {
         </div>
 
         {/* Features */}
-        <div className="mt-20 grid md:grid-cols-3 gap-8">
+        <div className="mt-20 grid md:grid-cols-3 gap-8 container mx-auto">
           <Card className="text-center">
             <CardHeader>
               <div className="h-12 w-12 rounded-full bg-blue-100 flex items-center justify-center mx-auto mb-4">
