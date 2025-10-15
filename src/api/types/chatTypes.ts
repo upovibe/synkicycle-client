@@ -161,3 +161,29 @@ export interface SocketReadEvent {
   readBy: string;
 }
 
+// Unread Count Types
+export interface UnreadCountItem {
+  connectionId: string;
+  unreadCount: number;
+}
+
+export interface GetUnreadCountsResponse {
+  success: boolean;
+  message: string;
+  data: {
+    unreadCounts: UnreadCountItem[];
+    totalUnread: number;
+  };
+}
+
+export interface SocketUnreadCountsEvent {
+  unreadCounts: UnreadCountItem[];
+  totalUnread: number;
+}
+
+export interface SocketUnreadCountUpdateEvent {
+  connectionId: string;
+  unreadCount: number;
+  action: 'increment' | 'decrement';
+}
+

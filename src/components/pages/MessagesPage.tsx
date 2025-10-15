@@ -8,7 +8,7 @@ import { ChatbotChatBox } from '@/components/chat/ChatbotChatBox';
 import { LoaderOne } from '@/components/ui/loader';
 
 export default function MessagesPage() {
-  const { connections, fetchConnections, connectionsLoading } = useChatStore();
+  const { connections, fetchConnections, connectionsLoading, fetchUnreadCounts } = useChatStore();
   const { createConversation, setCurrentConversation, getUserConversations, conversations } = useChatbotStore();
   const [selectedConnection, setSelectedConnection] = useState<Connection | null>(null);
   const [showChatbot, setShowChatbot] = useState(false);
@@ -18,7 +18,9 @@ export default function MessagesPage() {
     fetchConnections({ status: 'accepted' });
     // Load chatbot conversations
     getUserConversations();
-  }, [fetchConnections, getUserConversations]);
+    // Fetch initial unread counts
+    fetchUnreadCounts();
+  }, [fetchConnections, getUserConversations, fetchUnreadCounts]);
 
   // Update selected connection when connections change (for real-time updates)
   useEffect(() => {

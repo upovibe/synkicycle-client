@@ -9,6 +9,7 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { MessageSquare, Search, Bot, Sparkles, Users, Lightbulb } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useChatbotStore } from '@/api/stores/chatbotStore';
+import { useChatStore } from '@/api/stores/chatStore';
 
 interface ChatListProps {
   connections: Connection[];
@@ -26,6 +27,7 @@ export function ChatList({
   const { user } = useAuthContext();
   const [searchQuery, setSearchQuery] = useState('');
   const { createConversation } = useChatbotStore();
+  const { unreadCounts } = useChatStore();
   
   const userId = user?._id || (user as any)?.id;
 
@@ -188,7 +190,8 @@ export function ChatList({
               if (!otherParticipant) return null;
 
               const isSelected = selectedConnection?._id === connection._id;
-              const hasUnread = false; // TODO: Implement unread count
+              const unreadCount = unreadCounts[connection._id] || 0;
+              const hasUnread = unreadCount > 0;
 
               return (
                 <div
@@ -232,7 +235,7 @@ export function ChatList({
                       </p>
                       {hasUnread && (
                         <Badge className="ml-2 h-5 min-w-5 rounded-full text-xs px-1.5 shrink-0">
-                          3
+                          {unreadCount}
                         </Badge>
                       )}
                     </div>

@@ -14,6 +14,7 @@ import type {
   GetConnectionResponse,
   SendMessageResponse,
   GetMessagesResponse,
+  GetUnreadCountsResponse,
 } from '@/api/types/chatTypes';
 import { socketService } from '@/services/socket.service';
 import toast from 'react-hot-toast';
@@ -29,6 +30,10 @@ interface ChatState {
   messages: Record<string, Message[]>; // connectionId -> messages[]
   messagesLoading: boolean;
   messagesError: string | null;
+
+  // Unread counts
+  unreadCounts: Record<string, number>; // connectionId -> unreadCount
+  unreadCountsLoading: boolean;
 
   // Typing indicators
   typingUsers: Record<string, Set<string>>; // connectionId -> Set of userIds
@@ -50,6 +55,7 @@ interface ChatState {
   fetchMessages: (connectionId: string, params?: GetMessagesParams) => Promise<void>;
   sendMessage: (payload: SendMessagePayload) => Promise<void>;
   markMessagesAsRead: (connectionId: string, messageIds?: string[]) => Promise<void>;
+  fetchUnreadCounts: () => Promise<void>;
 
   // Actions - Typing
   setTyping: (connectionId: string, isTyping: boolean) => void;
@@ -71,6 +77,8 @@ export const useChatStore = create<ChatState>((set, get) => ({
   messages: {},
   messagesLoading: false,
   messagesError: null,
+  unreadCounts: {},
+  unreadCountsLoading: false,
   typingUsers: {},
   onlineUsers: new Set(),
   isSocketInitialized: false,
@@ -161,6 +169,14 @@ export const useChatStore = create<ChatState>((set, get) => ({
     if (connection) {
       socketService.emitJoinConnection(connection._id);
       get().fetchMessages(connection._id);
+      
+      // Clear unread count when chat is opened
+      set((state) => ({
+        unreadCounts: {
+          ...state.unreadCounts,
+          [connection._id]: 0,
+        },
+      }));
     }
   },
 
@@ -238,6 +254,11 @@ export const useChatStore = create<ChatState>((set, get) => ({
               : msg
           ) || [],
         },
+        // Clear unread count when messages are marked as read
+        unreadCounts: {
+          ...state.unreadCounts,
+          [connectionId]: 0,
+        },
       }));
     } catch (error) {
       console.error('Failed to mark messages as read:', error);
@@ -270,6 +291,8 @@ export const useChatStore = create<ChatState>((set, get) => ({
     socketService.removeAllListeners('user-stopped-typing');
     socketService.removeAllListeners('user:online');
     socketService.removeAllListeners('user:offline');
+    socketService.removeAllListeners('unread-counts');
+    socketService.removeAllListeners('unread-count-update');
 
     socketService.connect(token);
     set({ isSocketInitialized: true });
@@ -328,6 +351,11 @@ export const useChatStore = create<ChatState>((set, get) => ({
               ? { ...msg, status: 'read' as const, readAt: new Date().toISOString() }
               : msg
           ) || [],
+        },
+        // Clear unread count when messages are read via socket
+        unreadCounts: {
+          ...state.unreadCounts,
+          [connectionId]: 0,
         },
       }));
     });
@@ -429,12 +457,64 @@ export const useChatStore = create<ChatState>((set, get) => ({
         return { onlineUsers };
       });
     });
+
+    // Unread count events
+    socketService.onUnreadCounts((data) => {
+      const unreadCountsObj = data.unreadCounts.reduce((acc, item) => {
+        acc[item.connectionId] = item.unreadCount;
+        return acc;
+      }, {} as Record<string, number>);
+      
+      set({ unreadCounts: unreadCountsObj });
+    });
+
+    socketService.onUnreadCountUpdate((data) => {
+      set((state) => {
+        const currentCount = state.unreadCounts[data.connectionId] || 0;
+        let newCount = currentCount;
+        
+        if (data.action === 'increment') {
+          newCount = currentCount + data.unreadCount;
+        } else if (data.action === 'decrement') {
+          newCount = Math.max(0, currentCount - data.unreadCount);
+        }
+        
+        return {
+          unreadCounts: {
+            ...state.unreadCounts,
+            [data.connectionId]: newCount,
+          },
+        };
+      });
+    });
   },
 
   // Disconnect Socket.io
   disconnectSocket: () => {
     socketService.disconnect();
     set({ isSocketInitialized: false });
+  },
+
+  // Fetch unread counts
+  fetchUnreadCounts: async () => {
+    set({ unreadCountsLoading: true });
+    try {
+      const response: GetUnreadCountsResponse = await apiClient.get(MESSAGE_ENDPOINTS.GET_UNREAD_COUNTS);
+      
+      // Convert array to object for easier lookup
+      const unreadCountsObj = response.data.unreadCounts.reduce((acc, item) => {
+        acc[item.connectionId] = item.unreadCount;
+        return acc;
+      }, {} as Record<string, number>);
+
+      set({ 
+        unreadCounts: unreadCountsObj,
+        unreadCountsLoading: false 
+      });
+    } catch (error) {
+      console.error('Error fetching unread counts:', error);
+      set({ unreadCountsLoading: false });
+    }
   },
 
   // Clear error

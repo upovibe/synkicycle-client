@@ -4,6 +4,8 @@ import type {
   SocketConnectionEvent,
   SocketTypingEvent,
   SocketReadEvent,
+  SocketUnreadCountsEvent,
+  SocketUnreadCountUpdateEvent,
 } from '@/api/types/chatTypes';
 
 class SocketService {
@@ -116,6 +118,15 @@ class SocketService {
     this.on('user:offline', callback);
   }
 
+  // Unread count events
+  onUnreadCounts(callback: (data: SocketUnreadCountsEvent) => void) {
+    this.on('unread-counts', callback);
+  }
+
+  onUnreadCountUpdate(callback: (data: SocketUnreadCountUpdateEvent) => void) {
+    this.on('unread-count-update', callback);
+  }
+
   // Emit events
   emitTyping(connectionId: string) {
     this.emit('typing', { connectionId });
@@ -131,6 +142,11 @@ class SocketService {
 
   emitLeaveConnection(connectionId: string) {
     this.emit('leave-connection', { connectionId });
+  }
+
+  // Unread count events
+  emitGetUnreadCounts() {
+    this.emit('get-unread-counts');
   }
 
   // Generic event handlers
