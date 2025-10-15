@@ -24,13 +24,34 @@ interface NetworkHubLayoutProps {
 }
 
 export default function NetworkHubLayout({ children }: NetworkHubLayoutProps) {
-  const { user, logout } = useAuthContext();
+  const { user, logout, isAuthenticated, loading } = useAuthContext();
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
   const [showProfileDialog, setShowProfileDialog] = useState(false);
   const [showProfileViewDialog, setShowProfileViewDialog] = useState(false);
   const { initializeSocket } = useChatStore();
   const { accessToken } = useAuthStore();
+
+  // Redirect to login if not authenticated
+  useEffect(() => {
+    if (!loading && !isAuthenticated) {
+      navigate({ to: '/auth/login', replace: true });
+    }
+  }, [isAuthenticated, loading, navigate]);
+
+  // Show loading while checking authentication
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+      </div>
+    );
+  }
+
+  // Don't render anything if not authenticated (will redirect)
+  if (!isAuthenticated) {
+    return null;
+  }
 
   // Initialize Socket.io connection
   useEffect(() => {
