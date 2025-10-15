@@ -429,15 +429,12 @@ export function ChatBox({ connection, onBack }: ChatBoxProps) {
             >
               {isSending ? (
                 <>
-                  <div className="h-4 w-4 mr-2 flex items-center justify-center">
-                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-primary-foreground"></div>
-                  </div>
                   <span className="hidden md:inline">Sending...</span>
                 </>
               ) : (
                 <>
-                  <Send className="h-4 w-4 md:mr-2" />
                   <span className="hidden md:inline">Send</span>
+                  <Send className="h-4 w-4 md:mr-2" />
                 </>
               )}
             </Button>
