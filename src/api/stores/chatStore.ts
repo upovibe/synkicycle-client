@@ -224,14 +224,8 @@ export const useChatStore = create<ChatState>((set, get) => ({
         message: newMessage,
       });
 
+      // Update connection's lastMessageAt immediately for better UX
       set((state) => ({
-        messages: {
-          ...state.messages,
-          [payload.connectionId]: [
-            ...(state.messages[payload.connectionId] || []),
-            newMessage,
-          ],
-        },
         connections: state.connections.map((conn) =>
           conn._id === payload.connectionId
             ? { ...conn, lastMessageAt: newMessage.createdAt }
