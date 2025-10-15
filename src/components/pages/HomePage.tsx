@@ -2,6 +2,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Users, MessageSquare, Sparkles } from 'lucide-react';
 import { ContainerScroll } from '@/components/ui/container-scroll-animation';
 import { BackgroundRippleEffect } from '@/components/ui/background-ripple-effect';
+import { HoverBorderGradient } from '@/components/ui/hover-border-gradient';
 
 export function HomePage() {
   return (
@@ -10,6 +11,18 @@ export function HomePage() {
       {/* Hero Section */}
       <main className="relative z-10 container mx-auto px-4 py-16 w-full">
         <div className="text-center max-w-4xl mx-auto">
+          {/* Hover Border Gradient Button */}
+          <div className="mb-8 flex justify-center">
+            <HoverBorderGradient
+              containerClassName="rounded-full"
+              as="button"
+              className="dark:bg-black bg-white text-black dark:text-white flex items-center space-x-2"
+            >
+              <SynkicycleLogo />
+              <span>Get Started</span>
+            </HoverBorderGradient>
+          </div>
+          
           <h2 className="text-5xl font-bold text-gray-900 mb-6">
             Connect, Network, and Grow
           </h2>
@@ -72,3 +85,11 @@ export function HomePage() {
     </div>
   );
 }
+
+const SynkicycleLogo = () => {
+  return (
+    <div className="h-4 w-4 shrink-0 rounded-tl-lg rounded-tr-sm rounded-br-lg rounded-bl-sm bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
+      <Sparkles className="h-2.5 w-2.5 text-white" />
+    </div>
+  );
+};
