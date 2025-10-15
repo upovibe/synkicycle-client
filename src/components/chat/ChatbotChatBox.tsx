@@ -419,8 +419,8 @@ export function ChatbotChatBox({ onBack }: ChatbotChatBoxProps) {
               disabled={!inputMessage.trim() || isTyping || isLoading}
               className="shrink-0"
             >
-              <Send className="h-4 w-4 md:mr-2" />
               <span className="hidden md:inline">Send</span>
+              <Send className="h-4 w-4 md:mr-2" />
             </Button>
           </div>
 
