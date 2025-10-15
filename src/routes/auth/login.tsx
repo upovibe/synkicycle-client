@@ -7,6 +7,7 @@ import { cn } from '@/lib/utils'
 import toast from 'react-hot-toast'
 import { BackgroundGradientAnimation } from '@/components/ui/background-gradient-animation'
 import { BackgroundGradient } from '@/components/ui/background-gradient'
+import { Sparkles } from 'lucide-react'
 
 export const Route = createFileRoute('/auth/login')({
   component: LoginPage,
@@ -126,10 +127,20 @@ function LoginPage() {
           interactive={true}
           containerClassName="h-full w-full"
         >
-          <div className="absolute z-50 inset-0 flex items-center justify-center text-white font-bold px-4 pointer-events-none text-3xl text-center md:text-4xl lg:text-7xl">
-            <p className="bg-clip-text text-transparent drop-shadow-2xl bg-gradient-to-b from-white/80 to-white/20">
-              Welcome Back!
-            </p>
+          <div className="absolute z-50 inset-0 flex flex-col items-center justify-center text-white font-bold px-4 pointer-events-none text-center">
+            {/* AI Box Logo */}
+            <div className="mb-6">
+              <div className="h-12 w-16 shrink-0 rounded-tl-lg rounded-tr-sm rounded-br-lg rounded-bl-sm bg-white/20 backdrop-blur-sm border border-white/30 flex items-center justify-center">
+                <Sparkles className="h-6 w-6 text-white" />
+              </div>
+            </div>
+            
+            {/* Welcome Text */}
+            <div className="text-3xl md:text-4xl lg:text-7xl">
+              <p className="bg-clip-text text-transparent drop-shadow-2xl bg-gradient-to-b from-white/80 to-white/20">
+                Welcome Back!
+              </p>
+            </div>
           </div>
         </BackgroundGradientAnimation>
       </div>
