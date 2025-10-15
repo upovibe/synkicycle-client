@@ -165,7 +165,15 @@ export const useChatStore = create<ChatState>((set, get) => ({
 
   // Set active connection
   setActiveConnection: (connection) => {
+    const currentConnection = get().activeConnection;
+    
+    // Leave previous connection if switching
+    if (currentConnection && currentConnection._id !== connection?._id) {
+      socketService.emitLeaveConnection(currentConnection._id);
+    }
+    
     set({ activeConnection: connection });
+    
     if (connection) {
       socketService.emitJoinConnection(connection._id);
       get().fetchMessages(connection._id);
@@ -177,6 +185,11 @@ export const useChatStore = create<ChatState>((set, get) => ({
           [connection._id]: 0,
         },
       }));
+    } else {
+      // If connection is null, leave the previous connection
+      if (currentConnection) {
+        socketService.emitLeaveConnection(currentConnection._id);
+      }
     }
   },
 
